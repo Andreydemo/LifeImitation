@@ -2,6 +2,7 @@ package com.demosoft.life.spring;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.demosoft.life.LifeImitationApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,4 +17,6 @@ public class ContextContainer {
 
     @Autowired
     public Viewport viewport;
+
+    public LifeImitationApplication game;
 }

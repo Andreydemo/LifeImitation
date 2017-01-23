@@ -19,6 +19,7 @@ public class LifeImitationApplication extends Game {
         LoadingScreen loadingScreen = SpringContextTools.getBean(LoadingScreen.class);
         setScreen(loadingScreen);
         contextContainer = SpringContextTools.getBean(ContextContainer.class);
+        contextContainer.game = this;
     }
 
     @Override

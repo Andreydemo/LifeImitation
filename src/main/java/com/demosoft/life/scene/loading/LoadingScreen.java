@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.demosoft.life.scene.ScreenNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,9 @@ public class LoadingScreen extends ScreenAdapter {
 
     @Autowired
     private Viewport viewport;
+
+    @Autowired
+    private ScreenNavigator screenNavigator;
 
     public LoadingScreen() {
     }
@@ -159,7 +163,7 @@ public class LoadingScreen extends ScreenAdapter {
                 //game.setScreen(new TiledLevelDemo(game));
 
                 //applicationContainer.getGame().setScreen(mainMenuScene);
-
+                screenNavigator.setScreen(screenNavigator.mainScreen);
 
                 //game.setScreen(new ThrustCopterScene(game));
                 //game.setScreen(new Sample3D(game));
