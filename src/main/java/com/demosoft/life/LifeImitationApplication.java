@@ -24,10 +24,12 @@ public class LifeImitationApplication extends Game {
 
     @Override
     public void resize(int width, int height) {
-        System.out.println("game resize");
-        //Gdx.graphics.setDisplayMode(width, height, Gdx.graphics.isFullscreen());
-        Gdx.graphics.setWindowedMode(width, height);
-        this.create();
+        if (Gdx.graphics.getWidth() != width || Gdx.graphics.getHeight() != height) {
+            System.out.println("game resize");
+            //Gdx.graphics.setDisplayMode(width, height, Gdx.graphics.isFullscreen());
+            Gdx.graphics.setWindowedMode(width, height);
+            this.create();
+        }
         contextContainer.viewport.update(width, height);
         contextContainer.camera.update();
     }

@@ -92,26 +92,6 @@ public class LoadingScreen extends ScreenAdapter {
         stage.addActor(logo);
 
         assetManager.load("logo.png", Texture.class);
-        /*assetManager.load("menu_background.jpg", Texture.class);
-        assetManager.load("gameover.png", Texture.class);
-       assetManager.load("life.png", Texture.class);
-       assetManager.load("sounds/journey.mp3", Music.class);
-       assetManager.load("sounds/pop.ogg", Sound.class);
-       assetManager.load("sounds/crash.ogg", Sound.class);
-       assetManager.load("sounds/alarm.ogg", Sound.class);
-       assetManager.load("sounds/shield.ogg", Sound.class);
-       assetManager.load("sounds/fuel.ogg", Sound.class);
-       assetManager.load("sounds/star.ogg", Sound.class);
-       assetManager.load("thrustcopterassets.txt", TextureAtlas.class);
-       assetManager.load("impact-40.fnt", BitmapFont.class);
-       assetManager.load("Smoke", ParticleEffect.class);
-       assetManager.load("Explosion", ParticleEffect.class);
-       assetManager.load("player.pack", TextureAtlas.class);
-       assetManager.load("isometric_hero/hero.pack", TextureAtlas.class);*/
-        // Add everything to be loaded, for instance:
-
-        //game.manager.load("uiskin.atlas", TextureAtlas.class);
-        //game.manager.load("default.fnt", BitmapFont.class);
     }
 
     @Override

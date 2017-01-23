@@ -12,7 +12,9 @@ public class SpringContextTools {
     private static ApplicationContext context;
 
     public static void initContext() {
-        context = new AnnotationConfigApplicationContext(AppConfiguration.class);
+        //if(context == null) {
+            context = new AnnotationConfigApplicationContext(AppConfiguration.class);
+       // }
     }
 
 
