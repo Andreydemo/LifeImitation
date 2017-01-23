@@ -1,10 +1,8 @@
-package com.demosoft.life.loading;
+package com.demosoft.life.scene.loading;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class LoadingScreen extends ScreenAdapter {
 
 
+    @Autowired
     private Stage stage;
 
     private Image logo;
@@ -37,7 +36,7 @@ public class LoadingScreen extends ScreenAdapter {
     private float percent;
 
     private Actor loadingBar;
-    private float waitTime=1;
+    private float waitTime = 1;
 
     @Autowired
     private AssetManager assetManager;
@@ -58,7 +57,7 @@ public class LoadingScreen extends ScreenAdapter {
         assetManager.finishLoading();
 
         // Initialize the stage where we will place everything
-        stage = new Stage(viewport);
+        //stage = new Stage(viewport);
 
         // Get our textureatlas from the manager
         TextureAtlas atlas = assetManager.get("loading/loading.pack", TextureAtlas.class);
@@ -88,7 +87,7 @@ public class LoadingScreen extends ScreenAdapter {
         stage.addActor(loadingFrame);
         stage.addActor(logo);
 
-       assetManager.load("logo.png", Texture.class);
+        assetManager.load("logo.png", Texture.class);
         /*assetManager.load("menu_background.jpg", Texture.class);
         assetManager.load("gameover.png", Texture.class);
        assetManager.load("life.png", Texture.class);
@@ -115,7 +114,7 @@ public class LoadingScreen extends ScreenAdapter {
     public void resize(int width, int height) {
         // Scale the viewport to fit the screen
         Vector2 scaledView = Scaling.fit.apply(800, 480, width, height);
-        stage.getViewport().update((int)scaledView.x, (int)scaledView.y, true);
+        stage.getViewport().update((int) scaledView.x, (int) scaledView.y, true);
 
         // Make the background fill the screen
         screenBg.setSize(width, height);
@@ -154,8 +153,8 @@ public class LoadingScreen extends ScreenAdapter {
 
         if (assetManager.update()) { // Load some, will return true if done
             // loading
-            waitTime-=delta;
-            if(waitTime<=0){
+            waitTime -= delta;
+            if (waitTime <= 0) {
                 //game.font=game.manager.get("impact-40.fnt", BitmapFont.class);
                 //game.setScreen(new TiledLevelDemo(game));
 
@@ -171,7 +170,7 @@ public class LoadingScreen extends ScreenAdapter {
         }
 
         // Interpolate the percentage to make it more smooth
-        percent = Interpolation.linear.apply(percent,assetManager.getProgress(), 0.1f);
+        percent = Interpolation.linear.apply(percent, assetManager.getProgress(), 0.1f);
 
         // Update positions (and size) to match the percentage
         loadingBarHidden.setX(startX + endX * percent);
@@ -187,11 +186,11 @@ public class LoadingScreen extends ScreenAdapter {
     @Override
     public void hide() {
         // Dispose the loading assets as we no longer need them
-       assetManager.unload("loading/loading.pack");
+        assetManager.unload("loading/loading.pack");
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         stage.dispose();
     }
 }

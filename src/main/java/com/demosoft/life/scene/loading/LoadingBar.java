@@ -1,4 +1,4 @@
-package com.demosoft.life.loading;
+package com.demosoft.life.scene.loading;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;

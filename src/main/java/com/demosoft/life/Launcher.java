@@ -11,8 +11,8 @@ public class Launcher {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "FlatMedievalWorld";
         //cfg.useGL30 = true;
-        cfg.width = 800;
-        cfg.height = 640;
+        cfg.width = 1024;
+        cfg.height = 768;
 
 
         LifeImitationApplication game = new LifeImitationApplication();

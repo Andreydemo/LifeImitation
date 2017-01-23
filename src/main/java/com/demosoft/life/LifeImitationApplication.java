@@ -1,9 +1,8 @@
 package com.demosoft.life;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.demosoft.life.loading.LoadingScreen;
+import com.demosoft.life.scene.loading.LoadingScreen;
 import com.demosoft.life.spring.ContextContainer;
 import com.demosoft.life.spring.SpringContextTools;
 
