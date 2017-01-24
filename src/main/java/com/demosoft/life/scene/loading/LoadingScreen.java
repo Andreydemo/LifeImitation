@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.scene.ScreenNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,13 @@ import org.springframework.stereotype.Component;
 public class LoadingScreen extends ScreenAdapter {
 
 
+    public static final String LOGO_RESOURCE_NAME = "logo";
+    public static final String LOADING_LOADING_FRAME = "loading/loading-frame";
+    public static final String LOADING_LOADING_BAR_HIDDEN = "loading/loading-bar-hidden";
+    public static final String LOADING_SCREEN_BG = "loading/screen-bg";
+    public static final String LOADING_LOADING_FRAME_BG = "loading/loading-frame-bg";
+    public static final String LOADING_LOADING_BAR_ANIM = "loading/loading-bar-anim";
+    public static final float FRAME_DURATION = 0.05f;
     @Autowired
     private Stage stage;
 
@@ -48,50 +56,32 @@ public class LoadingScreen extends ScreenAdapter {
     @Autowired
     private ScreenNavigator screenNavigator;
 
+    @Autowired
+    private AssetsLoader assetsLoader;
+
     public LoadingScreen() {
     }
 
     @Override
     public void show() {
-        //stage.setViewport(game.viewport);
 
-        // Tell the manager to load assets for the loading screen
-        assetManager.load("loading/loading.pack", TextureAtlas.class);
-        // Wait until they are finished loading
-        assetManager.finishLoading();
+        logo = assetsLoader.getImage(LOGO_RESOURCE_NAME, true);
 
-        // Initialize the stage where we will place everything
-        //stage = new Stage(viewport);
+        loadingFrame = assetsLoader.getImage(LOADING_LOADING_FRAME);
+        loadingBarHidden = assetsLoader.getImage(LOADING_LOADING_BAR_HIDDEN);
+        screenBg = assetsLoader.getImage(LOADING_SCREEN_BG);
+        loadingBg = assetsLoader.getImage(LOADING_LOADING_FRAME_BG);
 
-        // Get our textureatlas from the manager
-        TextureAtlas atlas = assetManager.get("loading/loading.pack", TextureAtlas.class);
-        TextureRegion region = new TextureRegion(new Texture(Gdx.files.internal("logo.png")));
-        region.flip(false, true);
-
-        // Grab the regions from the atlas and create some images
-        logo = new Image(region);
-        loadingFrame = new Image(atlas.findRegion("loading-frame"));
-        loadingBarHidden = new Image(atlas.findRegion("loading-bar-hidden"));
-        screenBg = new Image(atlas.findRegion("screen-bg"));
-        loadingBg = new Image(atlas.findRegion("loading-frame-bg"));
-
-        // Add the loading bar animation
-        Animation anim = new Animation(0.05f, atlas.findRegions("loading-bar-anim"));
+        Animation anim = assetsLoader.getAnimation(LOADING_LOADING_BAR_ANIM, FRAME_DURATION);
         anim.setPlayMode(Animation.PlayMode.LOOP_REVERSED);
         loadingBar = new LoadingBar(anim);
 
-        // Or if you only need a static bar, you can do
-        // loadingBar = new Image(atlas.findRegion("loading-bar1"));
-
-        // Add all the actors to the stage
         stage.addActor(screenBg);
         stage.addActor(loadingBar);
         stage.addActor(loadingBg);
         stage.addActor(loadingBarHidden);
         stage.addActor(loadingFrame);
         stage.addActor(logo);
-
-        assetManager.load("logo.png", Texture.class);
     }
 
     @Override
@@ -132,24 +122,14 @@ public class LoadingScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (assetManager.update()) { // Load some, will return true if done
+        if (assetManager.update()) {
             // loading
             waitTime -= delta;
             if (waitTime <= 0) {
-                //game.font=game.manager.get("impact-40.fnt", BitmapFont.class);
-                //game.setScreen(new TiledLevelDemo(game));
-
-                //applicationContainer.getGame().setScreen(mainMenuScene);
                 screenNavigator.setScreen(screenNavigator.mainScreen);
 
-                //game.setScreen(new ThrustCopterScene(game));
-                //game.setScreen(new Sample3D(game));
-                //game.setScreen(new Interaction3D(game));
-                //game.setScreen(new SmokingPlane(game));
-                //game.setScreen(new BulletSample(game));
             }
         }
 
@@ -170,7 +150,7 @@ public class LoadingScreen extends ScreenAdapter {
     @Override
     public void hide() {
         // Dispose the loading assets as we no longer need them
-        assetManager.unload("loading/loading.pack");
+        //assetManager.unload("loading/loading.pack");
     }
 
     @Override

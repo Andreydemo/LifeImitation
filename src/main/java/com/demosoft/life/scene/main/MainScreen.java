@@ -1,17 +1,28 @@
 package com.demosoft.life.scene.main;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.scene.BaseScene;
 import com.demosoft.life.scene.FlippedStage;
 import com.demosoft.life.spring.ContextContainer;
@@ -25,32 +36,64 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class MainScreen extends BaseScene {
-    Image screenBg;
-    TextureAtlas atlas;
+    public static final String UISKIN = "uiskin";
+    private Image screenBg;
+    private TextureAtlas atlas;
 
-    FlippedStage stage;
-    Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-    SelectBox<String> debugLevel = new SelectBox<String>(skin);
-    Vector2 debugPosition = new Vector2(500, Gdx.graphics.getHeight() - 500);
+    @Autowired
+    private FlippedStage stage;
+    private Skin skin;
+    private SelectBox<String> selectBox;
+    private Vector2 debugPosition = new Vector2(500, Gdx.graphics.getHeight() - 500);
+    private TextButton playButton;
+   /* private TiledMap tiledMap;
+    private TiledMapRenderer tiledMapRenderer;*/
 
-    public static final Vector2 debugSize = new Vector2(800, 600);
 
     @Autowired
     private ContextContainer context;
 
-   /* @Autowired
-    private FlagController flags;*/
-/*
     @Autowired
-    private Logger logger;*/
+    private AssetsLoader assetsLoader;
+
+    @Autowired
+    MapRender mapRender;
 
     @PostConstruct
     private void init() {
-        debugLevel.setItems(new String[]{"Item 1", "Item 2", "Item 3","Item 4"});
-        debugLevel.setSelectedIndex(0);
-        debugLevel.setDebug(true);
-        debugLevel.setBounds(debugPosition.x, debugPosition.y, 200, 50);
-        debugLevel.addListener(new ClickListener() {
+       /* tiledMap = new TiledMap();
+        MapLayers layers = tiledMap.getLayers();
+
+        TiledMapTileLayer layer1 = new TiledMapTileLayer(100, 100, 10, 10);
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+
+        cell.setTile(new StaticTiledMapTile(new TextureRegion(new Texture(Gdx.files.internal("map/black_cell.bmp")))));
+        layer1.setCell(99, 99, cell);
+        layer1.setCell(50, 50, cell);
+        layer1.setCell(25, 25, cell);
+        layer1.setCell(0, 0, cell);
+
+        layers.add(layer1);
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);*/
+
+        skin = assetsLoader.getSkin(UISKIN);
+        selectBox = new SelectBox<String>(skin);
+        playButton = new TextButton("PLAY GAME", skin);
+
+
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("hello");
+            }
+        });
+
+
+        selectBox.setItems(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"});
+        selectBox.setSelectedIndex(0);
+        selectBox.setDebug(true);
+        selectBox.setBounds(debugPosition.x, debugPosition.y, 200, 50);
+        selectBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("->" + event + "x: " + x + " y: " + y);
@@ -59,27 +102,23 @@ public class MainScreen extends BaseScene {
         });
         atlas = new TextureAtlas(Gdx.files.internal("ui/newUi.pack"));
         screenBg = new Image(atlas.findRegion("screen-bg"));
-        screenBg.setSize(debugSize.x, debugSize.y);
+        screenBg.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         foolowToCamera(screenBg);
-        stage = new FlippedStage(context.viewport);
         stage.setFlipped(true);
-        if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, stage);
-        }
-        stage.setViewport(context.viewport);
         stage.setDebugAll(true);
         stage.addActor(screenBg);
-        stage.addActor(debugLevel);
+        stage.addActor(selectBox);
+        stage.addActor(playButton);
         stage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("-> stage " + event + "x: " + x + " y: " + y);
                 for (Actor act : stage.getRoot().getChildren()) {
                     if (act instanceof SelectBox) {
-                       // logger.logInfo(((SelectBox) act).getX() + " " + ((SelectBox) act).getY());
+                        System.out.println(((SelectBox) act).getX() + " " + ((SelectBox) act).getY());
                     }
                     if (act instanceof Image) {
-                        //logger.logInfo(((Image) act).getX() + " " + ((Image) act).getY());
+                        System.out.println(((Image) act).getX() + " " + ((Image) act).getY());
 
                     }
                 }
@@ -89,40 +128,45 @@ public class MainScreen extends BaseScene {
     }
 
     @Override
+    public void show() {
+        if (Gdx.input.getInputProcessor() == null) {
+            Gdx.input.setInputProcessor(new InputMultiplexer());
+        }
+        if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, stage);
+            System.out.println("added");
+        }
+    }
+
+    @Override
+    public void hide() {
+        if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(stage);
+            System.out.println("removed");
+        }
+    }
+
+    @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         context.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        //context.getActiveScene().render(delta);
-        //if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-           // if (flags.debugEnabled) {
-             //   context.loadActiveScene();
-               // flags.debugEnabled = false;
-            //} else {
-             //   context.saveActiveScene();
-               // context.game.setScreen(this);
-                //flags.debugEnabled = true;
-
-           // }
-      //  }
-       /* foolowToCamera(screenBg);
-        foollowToCamera(debugLevel);*/
-
-
-        stage.getBatch().setProjectionMatrix(context.camera.combined);
+        // stage.getBatch().setProjectionMatrix(context.camera.combined);
         stage.act();
         stage.draw();
+        context.camera.update();
+       /* tiledMapRenderer.setView( context.camera);
+        tiledMapRenderer.render();*/
+        mapRender.render();
 
-
-        /*for (Actor act : stage.getRoot().getChildren()) {
+        for (Actor act : stage.getRoot().getChildren()) {
             if (act instanceof SelectBox) {
-                logger.logInfo(((SelectBox)act).getX() + " " + ((SelectBox)act).getY());
-
+                // System.out.println(((SelectBox)act).getX() + " " + ((SelectBox)act).getY());
             }
-        }*/
+        }
 
         super.render(delta);
         context.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-       // logger.logDebug(context.getCamera().position + " " + (float) (screenBg.getX() + screenBg.getWidth() / 2) + ":" + (float) (screenBg.getY() + screenBg.getHeight() / 2));
+        // System.out.println((context.camera.position + " " + (float) (screenBg.getX() + screenBg.getWidth() / 2) + ":" + (float) (screenBg.getY() + screenBg.getHeight() / 2)));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,19 +29,26 @@ public class AssetsLoader {
 
     public static final String IMAGES_PROPERTIES = "images.properties";
     public static final String PACKS_PROPERTIES = "packs.properties";
+    public static final String SKINS_PROPERTIES = "skins.properties";
 
     public static final String PACK_PREFIX = "pack-";
     public static final String IMAGE_PREFIX = "image-";
     public static final String ANIMATION_PREFIX = "animation-";
 
-    private Map<String, Image> stringImageMap = new HashMap<>();
-    private Map<String, Array<TextureAtlas.AtlasRegion>> stringAnimationMap = new HashMap<>();
+    private static Map<String, TextureRegion> stringImageMap = new HashMap<>();
+    private static Map<String, Array<TextureAtlas.AtlasRegion>> stringAnimationMap = new HashMap<>();
+    private static Map<String, Skin> stringSkinMap = new HashMap<>();
+
+    private static boolean loaded = false;
 
     @PostConstruct
     void init() {
-        loadPacks();
-        loadImages();
-        System.out.println("resources loaded");
+        if (!loaded) {
+            loadPacks();
+            loadImages();
+            loadSkins();
+            System.out.println("resources loaded");
+        }
     }
 
     private void loadPacks() {
@@ -69,7 +77,7 @@ public class AssetsLoader {
             String[] values = ((String) prop.get(IMAGE_PREFIX + entry.getKey())).split(",");
             for (String value : values) {
                 String imageKey = entry.getKey() + "/" + value;
-                stringImageMap.put(imageKey, new Image(entry.getValue().findRegion(value)));
+                stringImageMap.put(imageKey, entry.getValue().findRegion(value));
             }
         }
     }
@@ -101,10 +109,19 @@ public class AssetsLoader {
     private void loadImages() {
         Properties prop = loadProperties(IMAGES_PROPERTIES);
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            Image image = new Image(new TextureRegion(new Texture(Gdx.files.internal((String) entry.getValue()))));
+            TextureRegion image = new TextureRegion(new Texture(Gdx.files.internal((String) entry.getValue())));
             stringImageMap.put((String) entry.getKey(), image);
         }
     }
+
+    private void loadSkins() {
+        Properties prop = loadProperties(SKINS_PROPERTIES);
+        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+            Skin skin = new Skin(Gdx.files.internal((String) entry.getValue()));
+            stringSkinMap.put((String) entry.getKey(), skin);
+        }
+    }
+
 
     private Properties loadProperties(String path) {
         Properties prop = new Properties();
@@ -121,7 +138,17 @@ public class AssetsLoader {
     }
 
     public Image getImage(String resourceName) {
-        return stringImageMap.get(resourceName);
+        return new Image(stringImageMap.get(resourceName));
+    }
+
+    public Skin getSkin(String resourceName) {
+        return stringSkinMap.get(resourceName);
+    }
+
+    public Image getImage(String resourceName, boolean yFlip) {
+        TextureRegion textureRegion = stringImageMap.get(resourceName);
+        textureRegion.flip(false, yFlip);
+        return new Image(textureRegion);
     }
 
     public Animation getAnimation(String resourceName, float frameDuration) {
