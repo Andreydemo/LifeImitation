@@ -5,5 +5,11 @@ package com.demosoft.life.imitation.entity;
  */
 public enum CellType {
 
-    SEA,GROUND
+    WATER_LOW,
+    WATER_HIGHT,
+    DESERT_HIGHT,
+    DESERT_LOW,
+
+    GROUND_HIGH,
+    GROUND_LOW
 }

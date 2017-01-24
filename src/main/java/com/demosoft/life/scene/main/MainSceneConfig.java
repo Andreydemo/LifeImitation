@@ -11,10 +11,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MainSceneConfig {
 
+    public static final int DEGREE = 6;
+
     @Bean
     MapRender mapRender() {
-        Map map = new Map(100, 100, CellType.GROUND);
-        MapRender mapRender = new MapRender(100, 100, map, 5, 5);
+        int mapSide = (int) (Math.pow(2, DEGREE) + 1);
+        System.out.println("MAP side: " + mapSide);
+        Map map = new Map(mapSide, CellType.GROUND_LOW);
+        MapRender mapRender = new MapRender(50, 50, map, 12, 12);
         return mapRender;
 
     }

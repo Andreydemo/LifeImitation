@@ -5,7 +5,9 @@ package com.demosoft.life.imitation.entity;
  */
 public interface Cell {
 
-    CellType getCellType();
+    int getValue();
+
+    void setValue(int Value);
 
     int getY();
 

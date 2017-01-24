@@ -1,5 +1,5 @@
 newUi.png
-size: 6,6
+size: 6,13
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -10,3 +10,10 @@ screen-bg
   orig: 6, 6
   offset: 0, 0
   index: -1
+white-screen-bg
+  rotate: false
+  xy: 9, 0
+  size: 6, 6
+  orig: 6, 6
+  offset: 0, 0
+  index: 0

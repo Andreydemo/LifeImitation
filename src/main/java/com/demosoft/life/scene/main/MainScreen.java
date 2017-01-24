@@ -44,8 +44,10 @@ public class MainScreen extends BaseScene {
     private FlippedStage stage;
     private Skin skin;
     private SelectBox<String> selectBox;
-    private Vector2 debugPosition = new Vector2(500, Gdx.graphics.getHeight() - 500);
+    private Vector2 debugPosition = new Vector2(1000, Gdx.graphics.getHeight() - 500);
     private TextButton playButton;
+    private TextButton stopButton;
+    private TextButton pauseButton;
    /* private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;*/
 
@@ -78,7 +80,12 @@ public class MainScreen extends BaseScene {
 
         skin = assetsLoader.getSkin(UISKIN);
         selectBox = new SelectBox<String>(skin);
-        playButton = new TextButton("PLAY GAME", skin);
+        playButton = new TextButton("PLAY", skin);
+        playButton.setBounds(50, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
+        stopButton = new TextButton("STOP", skin);
+        stopButton.setBounds(300, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
+        pauseButton = new TextButton("PAUSE", skin);
+        pauseButton.setBounds(550, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
 
 
         playButton.addListener(new ClickListener() {
@@ -101,7 +108,7 @@ public class MainScreen extends BaseScene {
             }
         });
         atlas = new TextureAtlas(Gdx.files.internal("ui/newUi.pack"));
-        screenBg = new Image(atlas.findRegion("screen-bg"));
+        screenBg = new Image(atlas.findRegion("white-screen-bg"));
         screenBg.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         foolowToCamera(screenBg);
         stage.setFlipped(true);
@@ -109,6 +116,8 @@ public class MainScreen extends BaseScene {
         stage.addActor(screenBg);
         stage.addActor(selectBox);
         stage.addActor(playButton);
+        stage.addActor(stopButton);
+        stage.addActor(pauseButton);
         stage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

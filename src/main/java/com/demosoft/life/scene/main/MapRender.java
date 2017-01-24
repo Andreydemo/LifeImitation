@@ -34,15 +34,54 @@ public class MapRender {
     public void render() {
         contextContainer.camera.update();
         shapeRenderer.setProjectionMatrix(contextContainer.camera.combined);
+
+
+        drawBackgroundMap();
+        drawForegroundMap();
+        drawBorder();
+
+    }
+
+    private void drawBackgroundMap() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (int x = 0; x < map.getSize(); x++) {
+            for (int y = 0; y < map.getSize(); y++) {
+                shapeRenderer.setColor(new Color(CellRenderer.getBackgroundColor(map.getValueAt(x, y).getValue())));
+                shapeRenderer.rect(getWorldX(x * cellWidth), contextContainer.translateY(getWorldY(y * cellHeight)), cellWidth, cellHeight);
+
+
+            }
+        }
+        shapeRenderer.end();
+    }
+
+    private void drawForegroundMap() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (int x = 0; x < map.getSize(); x++) {
+            for (int y = 0; y < map.getSize(); y++) {
+                shapeRenderer.setColor(new Color(CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue())));
+                shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
+
+
+            }
+        }
+        shapeRenderer.end();
+    }
+
+    private void drawBorder() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
 
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
+        for (int x = 0; x < map.getSize(); x++) {
+            for (int y = 0; y < map.getSize(); y++) {
+
                 shapeRenderer.rect(getWorldX(x * cellWidth), contextContainer.translateY(getWorldY(y * cellHeight)), cellWidth, cellHeight);
+
+
             }
         }
-
         shapeRenderer.end();
     }
 

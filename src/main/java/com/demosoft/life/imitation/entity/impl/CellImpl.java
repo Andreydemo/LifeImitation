@@ -8,23 +8,14 @@ import com.demosoft.life.imitation.entity.CellType;
  */
 public class CellImpl implements Cell {
 
-    private CellType cellType;
     private int x;
     private int y;
+    private int value;
 
-    public CellImpl(CellType cellType, int x, int y) {
-        this.cellType = cellType;
+    public CellImpl(int value, int x, int y) {
+        this.value = value;
         this.x = x;
         this.y = y;
-    }
-
-    public CellImpl(CellType cellType) {
-        this.cellType = cellType;
-    }
-
-    @Override
-    public CellType getCellType() {
-        return cellType;
     }
 
     public int getY() {
@@ -41,5 +32,15 @@ public class CellImpl implements Cell {
 
     public void setX(int x) {
         this.x = x;
+    }
+
+    @Override
+    public int getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(int value) {
+        this.value = value;
     }
 }
