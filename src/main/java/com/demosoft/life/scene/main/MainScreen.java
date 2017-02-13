@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.scene.BaseScene;
 import com.demosoft.life.scene.FlippedStage;
+import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,21 +34,12 @@ public class MainScreen extends BaseScene {
     private Skin skin;
     //  private SelectBox<String> selectBox;
     private Vector2 debugPosition = new Vector2(1000, Gdx.graphics.getHeight() - 500);
-    private TextButton playButton;
-    private TextButton stopButton;
-    private TextButton pauseButton;
 
-    private TextArea cellInfoPanel;
-    private Label cellInfoLabel;
+    @Autowired
+    private ControlPanel controlPanel;
 
-    private TextArea mapInfoPanel;
-    private Label mapInfoLabel;
-
-    private TextArea eventsInfoPanel;
-    private Label eventsInfoLabel;
-   /* private TiledMap tiledMap;
-    private TiledMapRenderer tiledMapRenderer;*/
-
+    @Autowired
+    InfoPanelContainer infoPanelContainer;
 
     @Autowired
     private ContextContainer context;
@@ -66,20 +58,10 @@ public class MainScreen extends BaseScene {
         atlas = new TextureAtlas(Gdx.files.internal("ui/newUi.pack"));
         initScreenBg();
 
-        initCellInfo();
-        initMapInfo();
-        initEventInfo();
-        initPlayButton();
-        initStopButton();
-        initPauseButton();
+        controlPanel.addToStage(stage);
+        infoPanelContainer.addToStage(stage);
         stage.addListener(mapRender.clickListener);
 
-        playButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("hello");
-            }
-        });
 
 
 
@@ -112,61 +94,6 @@ public class MainScreen extends BaseScene {
         stage.addActor(screenBg);
     }
 
-    private void initPauseButton() {
-        pauseButton = new TextButton("PAUSE", skin);
-        pauseButton.setBounds(1050, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
-        pauseButton.setTouchable(Touchable.disabled);
-        stage.addActor(pauseButton);
-    }
-
-    private void initStopButton() {
-        stopButton = new TextButton("STOP", skin);
-        stopButton.setBounds(800, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
-        stage.addActor(stopButton);
-    }
-
-    private void initPlayButton() {
-        playButton = new TextButton("PLAY", skin);
-        playButton.setBounds(550, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
-        stage.addActor(playButton);
-    }
-
-    private void initEventInfo() {
-        eventsInfoPanel = new TextArea("eventsInfoPanel", skin);
-        eventsInfoPanel.setBounds(25, context.translateY(885), 500, 400);
-        eventsInfoPanel.setDisabled(true);
-
-        eventsInfoLabel = new Label("Events Info", skin);
-        eventsInfoLabel.setBounds(25, context.translateY(485), 300, 25);
-
-        stage.addActor(eventsInfoPanel);
-        stage.addActor(eventsInfoLabel);
-
-    }
-
-    private void initMapInfo() {
-        mapInfoPanel = new TextArea("mapInfoPanel", skin);
-        mapInfoPanel.setBounds(25, context.translateY(435), 500, 400);
-        mapInfoPanel.setDisabled(true);
-
-        mapInfoLabel = new Label("Map Info", skin);
-        mapInfoLabel.setBounds(25, context.translateY(35), 300, 25);
-
-        stage.addActor(mapInfoPanel);
-        stage.addActor(mapInfoLabel);
-
-    }
-
-    private void initCellInfo() {
-        cellInfoPanel = new TextArea("cellInfoPanel", skin);
-        cellInfoPanel.setBounds(1350, context.translateY(535), 500, 500);
-        cellInfoPanel.setDisabled(true);
-
-        cellInfoLabel = new Label("Cell Info", skin);
-        cellInfoLabel.setBounds(1350, context.translateY(35), 300, 25);
-        stage.addActor(cellInfoPanel);
-        stage.addActor(cellInfoLabel);
-    }
 
     private void initSelectBox() {
         SelectBox<String> selectBox = new SelectBox<>(skin);

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +28,9 @@ public class MapRender {
     @Autowired
     private ContextContainer contextContainer;
 
+    @Autowired
+    private InfoPanelContainer infoPanelContainer;
+
     public MapRender(float mapPositionX, float mapPositionY, Map map, int cellWidth, int cellHeight) {
         this.mapPositionY = mapPositionY;
         this.mapPositionX = mapPositionX;
@@ -44,6 +48,7 @@ public class MapRender {
                     int selectedY = (int) ((y - mapPositionY) / cellHeight);
                     map.setSelectedX(selectedX);
                     map.setSelectedY(selectedY);
+                    infoPanelContainer.getCellInfoPanel().update(selectedY, selectedX);
                     System.out.println("Selected x: " + selectedX + " | Selected y: " + selectedY);
                 }
             }

@@ -6,6 +6,7 @@ import com.demosoft.life.logic.random.XRandom;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.CellInfoPanel;
 import com.demosoft.life.scene.main.info.EventsInfoPanel;
+import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,40 +29,33 @@ public class Force {
 
     @Autowired
     private Statistic statistic;
-
     @Autowired
-    private EventsInfoPanel events;
-
-    @Autowired
-    private CellInfoPanel cellInfo;
+    private InfoPanelContainer infoPanelContainer;
 
     public void start() {
         if (timer == null) {
-            timer = new Timer(timerDelay, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    for (int y = 0; y < map.MAP_SIZE; y++) {
-                        for (int x = 0; x < map.MAP_SIZE; x++) {
-                            map.setActiveFlagHumanAt(1, y, x);
-                            map.setActiveFlagPlantAt(1, y, x);
-                        }
+            timer = new Timer(timerDelay, e -> {
+                for (int y = 0; y < map.MAP_SIZE; y++) {
+                    for (int x = 0; x < map.MAP_SIZE; x++) {
+                        map.setActiveFlagHumanAt(1, y, x);
+                        map.setActiveFlagPlantAt(1, y, x);
                     }
-                    for (int y = 0; y < map.MAP_SIZE; y++) {
-                        for (int x = 0; x < map.MAP_SIZE; x++) {
-                            act(map.getRawDataAt(y, x), y, x);
-                        }
-                    }
-                    // map.repaint();
-                    int y = map.getSelectedY();
-                    int x = map.getSelectedX();
-                    if (y != -1 && x != -1) {
-                        cellInfo.update(y, x);
-                    } else {
-                        cellInfo.reset();
-                    }
-                    statistic.update();
-                    // XMainPanel.mapInfoPanel.update(++date);
                 }
+                for (int y = 0; y < map.MAP_SIZE; y++) {
+                    for (int x = 0; x < map.MAP_SIZE; x++) {
+                        act(map.getRawDataAt(y, x), y, x);
+                    }
+                }
+                // map.repaint();
+                int y = map.getSelectedY();
+                int x = map.getSelectedX();
+               /* if (y != -1 && x != -1) {
+                    infoPanelContainer.getCellInfoPanel().update(y, x);
+                } else {
+                    infoPanelContainer.getCellInfoPanel().reset();
+                }*/
+                statistic.update();
+                infoPanelContainer.getMapInfoPanel().update(++date);
             });
         }
         timer.start();
@@ -103,7 +97,7 @@ public class Force {
             clearHuman(y, x);
             Statistic.peopleDied++;
             Statistic.peopleDiedByEnergy++;
-            events.update(date, "Human died by [Low Energy].");
+            infoPanelContainer.getEventsInfoPanel().update(date, "Human died by [Low Energy].");
             return true;
         }
         int satiety = UcfCoder.decodeHumanSatiety(cellData);
@@ -111,7 +105,7 @@ public class Force {
             clearHuman(y, x);
             Statistic.peopleDied++;
             Statistic.peopleDiedBySatiety++;
-            events.update(date, "Human died [Low Satiety].");
+            infoPanelContainer.getEventsInfoPanel().update(date, "Human died [Low Satiety].");
             return true;
         }
         // f(x): f(0..9000) <= 0, f(24000..32767) >= 100;
@@ -122,7 +116,7 @@ public class Force {
             clearHuman(y, x);
             Statistic.peopleDied++;
             Statistic.peopleDiedByAge++;
-            events.update(date, "Human died [Age].");
+            infoPanelContainer.getEventsInfoPanel().update(date, "Human died [Age].");
             return true;
         }
         return false;
@@ -229,7 +223,7 @@ public class Force {
                             map.setHumanSatietyAt(map.getHumanSatietyAt(yTarget, xTarget) - 4, yTarget, xTarget);
                             map.setHumanAgeAt(map.getHumanAgeAt(yTarget, xTarget) + 1, yTarget, xTarget);
                             map.setActiveFlagHumanAt(0, yTarget, xTarget);
-                            events.update(date, "Woman got pregnant.");
+                            infoPanelContainer.getEventsInfoPanel().update(date, "Woman got pregnant.");
                             return true;
                         }
                     }
@@ -262,14 +256,14 @@ public class Force {
                         map.setHumanPregnancyAt(0, yTarget, xTarget);
                         map.setActiveFlagHumanAt(0, yTarget, xTarget);
                         Statistic.childrenWereBorn++;
-                        events.update(date, "Child was born.");
+                        infoPanelContainer.getEventsInfoPanel().update(date, "Child was born.");
                         return true;
                     }
                 }
             }
             map.setHumanPregnancyAt(0, y, x);
             Statistic.childrenDied++;
-            events.update(date, "Child died.");
+            infoPanelContainer.getEventsInfoPanel().update(date, "Child died.");
             return true;
         }
         return false;
@@ -288,7 +282,7 @@ public class Force {
                 clearHuman(y, x);
                 Statistic.peopleDied++;
                 Statistic.peopleDiedByLost++;
-                // events.update(date, "Human died [Lost].");
+                infoPanelContainer.getEventsInfoPanel().update(date, "Human died [Lost].");
                 return true;
             }
             if (map.getHumanTypeAt(yTarget, xTarget) == 0) {

@@ -51,19 +51,19 @@ public class CellInfoPanel {
 
     public void update(int y, int x) {
         long cellData = map.getRawDataAt(y, x);
-        String info = String.format("<html>Landscape type: %s"
-                        + "<br> "
-                        + "<br> Human type: %s"
-                        + "<br> Human age: %s"
-                        + "<br> Human energy: %s"
-                        + "<br> Human satiety: %s"
-                        + "<br> Human pregnancy: %s"
-                        + "<br> "
-                        + "<br> Plant type: %s"
-                        + "<br> Plant fruits: %s"
-                        + "<br> "
-                        + "<br> Active flag (Human): %s"
-                        + "<br> Active flag (Plant): %s</html>",
+        String info = String.format("Landscape type: %s"
+                        + "\n "
+                        + "\n Human type: %s"
+                        + "\n Human age: %s"
+                        + "\n Human energy: %s"
+                        + "\n Human satiety: %s"
+                        + "\n Human pregnancy: %s"
+                        + "\n "
+                        + "\n Plant type: %s"
+                        + "\n Plant fruits: %s"
+                        + "\n "
+                        + "\n Active flag (Human): %s"
+                        + "\n Active flag (Plant): %s",
                 UcfCoder.decodeLandscapeType(cellData),
                 UcfCoder.decodeHumanType(cellData),
                 XFormatter.formatDate(UcfCoder.decodeHumanAge(cellData)),

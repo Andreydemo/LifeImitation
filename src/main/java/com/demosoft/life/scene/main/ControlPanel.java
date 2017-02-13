@@ -13,12 +13,14 @@ import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 /**
  * Created by Andrii_Korkoshko on 2/13/2017.
  */
+@Component
 public class ControlPanel {
 
     private TextButton playButton;
