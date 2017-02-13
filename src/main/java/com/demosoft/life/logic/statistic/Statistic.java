@@ -95,7 +95,7 @@ public class Statistic {
         plantsFruits = plantsFruitsTemp;
     }
 
-    public static void reset() {
+    public void reset() {
         people = 0;
         peopleMen = 0;
         peopleWomen = 0;

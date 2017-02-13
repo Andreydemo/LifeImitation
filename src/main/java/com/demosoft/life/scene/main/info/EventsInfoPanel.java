@@ -21,7 +21,6 @@ public class EventsInfoPanel {
     private List<String> baseElement;
     private Label label;
     private ScrollPane scrollElement;
-    final StringBuilder build = new StringBuilder();
 
     @Autowired
     private AssetsLoader assetsLoader;
