@@ -1,7 +1,10 @@
 package com.demosoft.life.spring;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.demosoft.life.LifeImitationApplication;
@@ -22,6 +25,10 @@ public class ContextContainer {
 
     public LifeImitationApplication game;
 
+    public final BitmapFont font = new BitmapFont(false);
+    private final SpriteBatch batch = new SpriteBatch();
+    ;
+
     private boolean flipped = false;
 
     public float translateY(float y) {
@@ -34,5 +41,17 @@ public class ContextContainer {
 
     public boolean isFlipped() {
         return flipped;
+    }
+
+    public void drawPosition() {
+        if (Gdx.input.isTouched()) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            font.draw(batch, "x: " + Gdx.input.getX() + " y: " + Gdx.input.getY(), Gdx.input.getX(), translateY(Gdx.input.getY()));
+            font.draw(batch, "unproject x: " + Gdx.input.getX() + " y: " + translateY(Gdx.input.getY()), Gdx.input.getX(),
+                    translateY(Gdx.input.getY()) + 20);
+            batch.end();
+        }
+
     }
 }

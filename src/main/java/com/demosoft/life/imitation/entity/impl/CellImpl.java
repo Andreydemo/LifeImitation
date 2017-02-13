@@ -10,9 +10,9 @@ public class CellImpl implements Cell {
 
     private int x;
     private int y;
-    private int value;
+    private long value;
 
-    public CellImpl(int value, int x, int y) {
+    public CellImpl(long value, int x, int y) {
         this.value = value;
         this.x = x;
         this.y = y;
@@ -35,12 +35,12 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
     @Override
-    public void setValue(int value) {
+    public void setValue(long value) {
         this.value = value;
     }
 }

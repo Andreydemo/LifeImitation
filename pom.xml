@@ -7,6 +7,9 @@
     <groupId>LifeImitation</groupId>
     <artifactId>com.demosoft.life</artifactId>
     <version>1.0</version>
+    <properties>
+        <gdx.version>1.9.5</gdx.version>
+    </properties>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
@@ -18,29 +21,29 @@
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
-            <version>1.9.3</version>
+            <version>${gdx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-platform</artifactId>
-            <version>1.9.3</version>
+            <version>${gdx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-backend-lwjgl</artifactId>
-            <version>1.9.3</version>
+            <version>${gdx.version}</version>
         </dependency>
         <!-- http://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-freetype -->
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-freetype</artifactId>
-            <version>1.9.3</version>
+            <version>${gdx.version}</version>
         </dependency>
         <!-- http://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-freetype-platform -->
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-freetype-platform</artifactId>
-            <version>1.9.3</version>
+            <version>${gdx.version}</version>
         </dependency>
         <dependency>
             <groupId>gdx-natives</groupId>

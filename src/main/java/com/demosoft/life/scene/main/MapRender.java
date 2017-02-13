@@ -2,6 +2,8 @@ package com.demosoft.life.scene.main;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,32 @@ public class MapRender {
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
+    public final ClickListener clickListener;
+
     @Autowired
     private ContextContainer contextContainer;
 
-    public MapRender(float mapPositionY, float mapPositionX, Map map, int cellWidth, int cellHeight) {
+    public MapRender(float mapPositionX, float mapPositionY, Map map, int cellWidth, int cellHeight) {
         this.mapPositionY = mapPositionY;
         this.mapPositionX = mapPositionX;
         this.map = map;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
+        clickListener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                y = contextContainer.translateY(y);
+                if (x >= mapPositionX && y >= mapPositionY
+                        && x <= getMapEndPositionX() && y <= getMapEndPositionY()) {
+                    int selectedX = (int) ((x - mapPositionX) / cellWidth);
+                    int selectedY = (int) ((y - mapPositionY) / cellHeight);
+                    map.setSelectedX(selectedX);
+                    map.setSelectedY(selectedY);
+                    System.out.println("Selected x: " + selectedX + " | Selected y: " + selectedY);
+                }
+            }
+        };
     }
 
     public void render() {
@@ -39,7 +58,7 @@ public class MapRender {
         drawBackgroundMap();
         drawForegroundMap();
         drawBorder();
-
+        drawSelected();
     }
 
     private void drawBackgroundMap() {
@@ -85,12 +104,31 @@ public class MapRender {
         shapeRenderer.end();
     }
 
+    private void drawSelected() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.WHITE);
+
+
+        shapeRenderer.rect(getWorldX(map.getSelectedX() * cellWidth), contextContainer.translateY(getWorldY(map.getSelectedY() * cellHeight)), cellWidth, cellHeight);
+
+
+        shapeRenderer.end();
+    }
+
     private float getWorldX(float x) {
         return mapPositionX + x;
     }
 
     private float getWorldY(float y) {
-        return mapPositionY + y;
+        return mapPositionY + y + cellHeight;
+    }
+
+    private float getMapEndPositionX() {
+        return mapPositionX + cellWidth * map.getSize();
+    }
+
+    private float getMapEndPositionY() {
+        return mapPositionY + cellHeight * map.getSize();
     }
 
 

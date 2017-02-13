@@ -4,57 +4,47 @@ package com.demosoft.life.imitation.entity;
  * Created by Andrii_Korkoshko on 1/24/2017.
  */
 public class UcfCoder {
-
-    /**
-     * + Landscape (type)
-     * + Human (type)
-     * + - Age
-     * + - Energy
-     * + - Satiety
-     * + - Pregnancy
-     * + Plant (type)
-     * + - Fruits
-     */
-
     // LANDSCAPE - TYPE
-    private final static long LANDSCAPE_TYPE_MASK       = 0x0000_0000_0000_0007L;
-    private final static int LANDSCAPE_TYPE_SHIFT       = 0;
-    public final static int LANDSCAPE_TYPE_EMPTY        = 0x0;
-    public final static int LANDSCAPE_TYPE_WATER_LOW    = 0x1;
-    public final static int LANDSCAPE_TYPE_WATER_HIGH   = 0x2;
-    public final static int LANDSCAPE_TYPE_GROUND_LOW   = 0x3;
-    public final static int LANDSCAPE_TYPE_GROUND_HIGH  = 0x4;
-    public final static int LANDSCAPE_TYPE_GRASS_LOW    = 0x5;
-    public final static int LANDSCAPE_TYPE_GRASS_HIGH   = 0x6;
+    private final static long LANDSCAPE_TYPE_MASK      = 0x0000_0000_0000_0007L;
+    private final static int LANDSCAPE_TYPE_SHIFT      = 0;
+    public final static int LANDSCAPE_TYPE_EMPTY       = 0x0;
+    public final static int LANDSCAPE_TYPE_WATER_LOW   = 0x1;
+    public final static int LANDSCAPE_TYPE_WATER_HIGH  = 0x2;
+    public final static int LANDSCAPE_TYPE_GROUND_LOW  = 0x3;
+    public final static int LANDSCAPE_TYPE_GROUND_HIGH = 0x4;
+    public final static int LANDSCAPE_TYPE_GRASS_LOW   = 0x5;
+    public final static int LANDSCAPE_TYPE_GRASS_HIGH  = 0x6;
     // HUMAN - TYPE
-    private final static long HUMAN_TYPE_MASK           = 0x0000_0000_0000_0018L;
-    private final static int HUMAN_TYPE_SHIFT           = 3;
-    public final static int HUMAN_TYPE_EMPTY            = 0x0;
-    public final static int HUMAN_TYPE_MAN              = 0x1;
-    public final static int HUMAN_TYPE_WOMAN            = 0x2;
+    private final static long HUMAN_TYPE_MASK          = 0x0000_0000_0000_0018L;
+    private final static int HUMAN_TYPE_SHIFT          = 3;
+    public final static int HUMAN_TYPE_EMPTY           = 0x0;
+    public final static int HUMAN_TYPE_MAN             = 0x1;
+    public final static int HUMAN_TYPE_WOMAN           = 0x2;
     // HUMAN - AGE
-    private final static long HUMAN_AGE_MASK            = 0x0000_0000_000F_FFE0L;
-    private final static int HUMAN_AGE_SHIFT            = 5;
+    private final static long HUMAN_AGE_MASK           = 0x0000_0000_000F_FFE0L;
+    private final static int HUMAN_AGE_SHIFT           = 5;
     // HUMAN - ENERGY
-    private final static long HUMAN_ENERGY_MASK         = 0x0000_0000_03F0_0000L;
-    private final static int HUMAN_ENERGY_SHIFT         = 20;
+    private final static long HUMAN_ENERGY_MASK        = 0x0000_0000_03F0_0000L;
+    private final static int HUMAN_ENERGY_SHIFT        = 20;
     // HUMAN - SATIETY
-    private final static long HUMAN_SATIETY_MASK        = 0x0000_0000_FC00_0000L;
-    private final static int HUMAN_SATIETY_SHIFT        = 26;
+    private final static long HUMAN_SATIETY_MASK       = 0x0000_0000_FC00_0000L;
+    private final static int HUMAN_SATIETY_SHIFT       = 26;
     // HUMAN - PREGNANCY
-    private final static long HUMAN_PREGNANCY_MASK      = 0x0000_01FF_0000_0000L;
-    private final static int HUMAN_PREGNANCY_SHIFT      = 32;
+    private final static long HUMAN_PREGNANCY_MASK     = 0x0000_01FF_0000_0000L;
+    private final static int HUMAN_PREGNANCY_SHIFT     = 32;
     // PLANT - TYPE
-    private final static long PLANT_TYPE_MASK           = 0x0000_0200_0000_0000L;
-    private final static int PLANT_TYPE_SHIFT           = 41;
-    public final static int PLANT_TYPE_EMPTY            = 0x0;
-    public final static int PLANT_TYPE_X                = 0x1;
+    private final static long PLANT_TYPE_MASK          = 0x0000_0200_0000_0000L;
+    private final static int PLANT_TYPE_SHIFT          = 41;
+    public final static int PLANT_TYPE_EMPTY           = 0x0;
+    public final static int PLANT_TYPE_APPLE           = 0x1;
     // PLANT - FRUITS
-    private final static long PLANT_FRUITS_MASK         = 0x0000_FC00_0000_0000L;
-    private final static int PLANT_FRUITS_SHIFT         = 42;
-    // ACTIVE FLAG
-    private final static long ACTIVE_FLAG_MASK          = 0x8000_0000_0000_0000L;
-    private final static int ACTIVE_FLAG_SHIFT          = 63;
+    private final static long PLANT_FRUITS_MASK        = 0x0000_FC00_0000_0000L;
+    private final static int PLANT_FRUITS_SHIFT        = 42;
+    // ACTIVE FLAGS
+    private final static long ACTIVE_FLAG_HUMAN_MASK   = 0x4000_0000_0000_0000L;
+    private final static int ACTIVE_FLAG_HUMAN_SHIFT   = 62;
+    private final static long ACTIVE_FLAG_PLANT_MASK   = 0x8000_0000_0000_0000L;
+    private final static int ACTIVE_FLAG_PLANT_SHIFT   = 63;
 
     public final static long encodeLandscapeType(long uc, int u) {
         return encode(uc, u, LANDSCAPE_TYPE_MASK, LANDSCAPE_TYPE_SHIFT);
@@ -120,12 +110,20 @@ public class UcfCoder {
         return decode(uc, PLANT_FRUITS_MASK, PLANT_FRUITS_SHIFT);
     }
 
-    public final static long encodeActiveFlag(long uc, int u) {
-        return encode(uc, u, ACTIVE_FLAG_MASK, ACTIVE_FLAG_SHIFT);
+    public final static long encodeActiveFlagHuman(long uc, int u) {
+        return encode(uc, u, ACTIVE_FLAG_HUMAN_MASK, ACTIVE_FLAG_HUMAN_SHIFT);
     }
 
-    public final static int decodeActiveFlag(long uc) {
-        return decode(uc, ACTIVE_FLAG_MASK, ACTIVE_FLAG_SHIFT);
+    public final static int decodeActiveFlagHuman(long uc) {
+        return decode(uc, ACTIVE_FLAG_HUMAN_MASK, ACTIVE_FLAG_HUMAN_SHIFT);
+    }
+
+    public final static long encodeActiveFlagPlant(long uc, int u) {
+        return encode(uc, u, ACTIVE_FLAG_PLANT_MASK, ACTIVE_FLAG_PLANT_SHIFT);
+    }
+
+    public final static int decodeActiveFlagPlant(long uc) {
+        return decode(uc, ACTIVE_FLAG_PLANT_MASK, ACTIVE_FLAG_PLANT_SHIFT);
     }
 
     // Example:
