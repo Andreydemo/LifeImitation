@@ -2,17 +2,16 @@ package com.demosoft.life.logic.force;
 
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.UcfCoder;
+import com.demosoft.life.imitation.entity.type.Human;
+import com.demosoft.life.imitation.entity.type.Landscape;
+import com.demosoft.life.imitation.entity.type.Plant;
 import com.demosoft.life.logic.random.XRandom;
 import com.demosoft.life.logic.statistic.Statistic;
-import com.demosoft.life.scene.main.info.CellInfoPanel;
-import com.demosoft.life.scene.main.info.EventsInfoPanel;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by Andrii_Korkoshko on 2/10/2017.
@@ -22,7 +21,7 @@ public class Force {
 
     private static int date = 1;
     private static Timer timer;
-    private static int timerDelay = 100;
+    private static int timerDelay = 50;
 
     @Autowired
     private Map map;
@@ -43,17 +42,9 @@ public class Force {
                 }
                 for (int y = 0; y < map.MAP_SIZE; y++) {
                     for (int x = 0; x < map.MAP_SIZE; x++) {
-                        act(map.getRawDataAt(y, x), y, x);
+                        act(map.getRawDataAt(x, y), y, x);
                     }
                 }
-                // map.repaint();
-                int y = map.getSelectedY();
-                int x = map.getSelectedX();
-               /* if (y != -1 && x != -1) {
-                    infoPanelContainer.getCellInfoPanel().update(y, x);
-                } else {
-                    infoPanelContainer.getCellInfoPanel().reset();
-                }*/
                 statistic.update();
                 infoPanelContainer.getMapInfoPanel().update(++date);
             });
@@ -76,7 +67,7 @@ public class Force {
 
     // ACT
     private void act(long cellData, int y, int x) {
-        if (UcfCoder.decodeActiveFlagHuman(cellData) == 1 && UcfCoder.decodeHumanType(cellData) != UcfCoder.HUMAN_TYPE_EMPTY) {
+        if (UcfCoder.decodeActiveFlagHuman(cellData) == 1 && UcfCoder.decodeHumanType(cellData) != Human.HUMAN_TYPE_EMPTY.getValue()) {
             if (tryToDie(cellData, y, x)
                     || tryToGiveBirth(cellData, y, x)
                     || tryToSleep(cellData, y, x)
@@ -84,7 +75,7 @@ public class Force {
                     || tryToMakeChild(cellData, y, x)
                     || tryToMove(cellData, y, x, 0, 0)) {/*Do nothing*/}
         }
-        if (UcfCoder.decodeActiveFlagPlant(cellData) == 1 && UcfCoder.decodePlantType(cellData) != UcfCoder.PLANT_TYPE_EMPTY) {
+        if (UcfCoder.decodeActiveFlagPlant(cellData) == 1 && UcfCoder.decodePlantType(cellData) != Plant.PLANT_TYPE_EMPTY.getValue()) {
             tryToMakeFruits(cellData, y, x);
             tryToDropFruit(cellData, y, x);
         }
@@ -110,8 +101,8 @@ public class Force {
         }
         // f(x): f(0..9000) <= 0, f(24000..32767) >= 100;
         // f(x) = 2*(x/300) - 60;
-        // Every year + 2% (since 30 years)
-        boolean decision = XRandom.generateBoolean(2 * (UcfCoder.decodeHumanAge(cellData) / 300) - 60);
+        // Every year + 2% (since 31 years)
+        boolean decision = XRandom.generateBoolean(2 * (UcfCoder.decodeHumanAge(cellData) / 350) - 60);
         if (decision) {
             clearHuman(y, x);
             Statistic.peopleDied++;
@@ -204,13 +195,13 @@ public class Force {
 
     // HUMAN - MAKE CHILD
     private boolean tryToMakeChild(long cellData, int y, int x) {
-        if (map.getHumanTypeAt(y, x) == UcfCoder.HUMAN_TYPE_WOMAN && map.getHumanPregnancyAt(y, x) == 0) {
+        if (map.getHumanTypeAt(y, x) == Human.HUMAN_TYPE_WOMAN.getValue() && map.getHumanPregnancyAt(y, x) == 0) {
             for (int yShift = -1; yShift < 2; yShift++) {
                 for (int xShift = -1; xShift < 2; xShift++) {
                     int yTarget = y + yShift;
                     int xTarget = x + xShift;
                     if (isCellInMapRange(yTarget, xTarget)
-                            && map.getHumanTypeAt(yTarget, xTarget) == UcfCoder.HUMAN_TYPE_MAN
+                            && map.getHumanTypeAt(yTarget, xTarget) == Human.HUMAN_TYPE_MAN.getValue()
                             && map.getActiveFlagHumanAt(yTarget, xTarget) == 1) {
                         boolean decision = XRandom.generateBoolean(30);
                         if (decision) {
@@ -248,8 +239,8 @@ public class Force {
                 for (int xShift = -1; xShift < 2; xShift++) {
                     int yTarget = y + yShift;
                     int xTarget = x + xShift;
-                    if (isCellInMapRange(yTarget, xTarget) && map.getHumanTypeAt(yTarget, xTarget) == UcfCoder.HUMAN_TYPE_EMPTY) {
-                        map.setHumanTypeAt(XRandom.generateBoolean() ? UcfCoder.HUMAN_TYPE_MAN : UcfCoder.HUMAN_TYPE_WOMAN, yTarget, xTarget);
+                    if (isCellInMapRange(yTarget, xTarget) && map.getHumanTypeAt(yTarget, xTarget) == Human.HUMAN_TYPE_EMPTY.getValue()) {
+                        map.setHumanTypeAt(XRandom.generateBoolean() ? Human.HUMAN_TYPE_MAN.getValue() : Human.HUMAN_TYPE_WOMAN.getValue(), yTarget, xTarget);
                         map.setHumanAgeAt(301, yTarget, xTarget);
                         map.setHumanEnergyAt(63, yTarget, xTarget);
                         map.setHumanSatietyAt(63, yTarget, xTarget);
@@ -288,7 +279,7 @@ public class Force {
             if (map.getHumanTypeAt(yTarget, xTarget) == 0) {
                 moveHuman(y, x, yTarget, xTarget);
                 int landscapeTarget = map.getLandscapeTypeAt(yTarget, xTarget);
-                if (landscapeTarget == UcfCoder.LANDSCAPE_TYPE_WATER_LOW || landscapeTarget == UcfCoder.LANDSCAPE_TYPE_WATER_HIGH) {
+                if (landscapeTarget == Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue() || landscapeTarget == Landscape.LANDSCAPE_TYPE_WATER_HIGH.getValue()) {
                     map.setHumanEnergyAt(map.getHumanEnergyAt(yTarget, xTarget) - 3, yTarget, xTarget);
                     map.setHumanSatietyAt(map.getHumanSatietyAt(yTarget, xTarget) - 3, yTarget, xTarget);
                 } else {
@@ -329,11 +320,11 @@ public class Force {
                 int landscapeTarget = map.getLandscapeTypeAt(yTarget, xTarget);
                 int humanTarget = map.getHumanTypeAt(yTarget, xTarget);
                 int plantTarget = map.getPlantTypeAt(yTarget, xTarget);
-                if (landscapeTarget != UcfCoder.LANDSCAPE_TYPE_WATER_LOW
-                        && landscapeTarget != UcfCoder.LANDSCAPE_TYPE_WATER_HIGH
-                        && humanTarget == UcfCoder.HUMAN_TYPE_EMPTY
-                        && plantTarget == UcfCoder.PLANT_TYPE_EMPTY) {
-                    map.setPlantTypeAt(UcfCoder.PLANT_TYPE_APPLE, yTarget, xTarget);
+                if (landscapeTarget != Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue()
+                        && landscapeTarget != Landscape.LANDSCAPE_TYPE_WATER_HIGH.getValue()
+                        && humanTarget == Human.HUMAN_TYPE_EMPTY.getValue()
+                        && plantTarget == Plant.PLANT_TYPE_EMPTY.getValue()) {
+                    map.setPlantTypeAt(Plant.PLANT_TYPE_APPLE.getValue(), yTarget, xTarget);
                 }
             }
         }

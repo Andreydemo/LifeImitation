@@ -2,6 +2,8 @@ package com.demosoft.life.logic.statistic;
 
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.UcfCoder;
+import com.demosoft.life.imitation.entity.type.Human;
+import com.demosoft.life.imitation.entity.type.Plant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,19 +70,19 @@ public class Statistic {
         int plantsFruitsTemp = 0;
         for (int y = 0; y < Map.MAP_SIZE; y++) {
             for (int x = 0; x < Map.MAP_SIZE; x++) {
-                if (map.getHumanTypeAt(y, x) != UcfCoder.HUMAN_TYPE_EMPTY) {
+                if (map.getHumanTypeAt(y, x) != Human.HUMAN_TYPE_EMPTY.getValue()) {
                     peopleTemp++;
                     peopleAgeTemp += map.getHumanAgeAt(y, x);
-                    if (map.getHumanTypeAt(y, x) == UcfCoder.HUMAN_TYPE_MAN) {
+                    if (map.getHumanTypeAt(y, x) == Human.HUMAN_TYPE_MAN.getValue()) {
                         peopleMenTemp++;
-                    } else if (map.getHumanTypeAt(y, x) == UcfCoder.HUMAN_TYPE_WOMAN) {
+                    } else if (map.getHumanTypeAt(y, x) == Human.HUMAN_TYPE_WOMAN.getValue()) {
                         peopleWomenTemp++;
                         if (map.getHumanPregnancyAt(y, x) != 0) {
                             peopleWomenPregnantTemp++;
                         }
                     }
                 }
-                if (map.getPlantTypeAt(y, x) != UcfCoder.PLANT_TYPE_EMPTY) {
+                if (map.getPlantTypeAt(y, x) != Plant.PLANT_TYPE_EMPTY.getValue()) {
                     plantsTemp++;
                     plantsFruitsTemp += map.getPlantFruitsAt(y, x);
                 }

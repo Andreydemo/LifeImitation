@@ -3,6 +3,7 @@ package com.demosoft.life.infra;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.impl.CellImpl;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import static com.demosoft.life.imitation.entity.Map.MAP_SIZE;
@@ -24,6 +25,14 @@ public class MapLoader {
             data = (long[][]) ois.readObject();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         for (int x = 0; x < MAP_SIZE; x++) {
             for (int y = 0; y < MAP_SIZE; y++) {

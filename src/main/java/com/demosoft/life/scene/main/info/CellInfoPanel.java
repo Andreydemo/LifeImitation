@@ -49,10 +49,14 @@ public class CellInfoPanel {
         stage.addActor(baseElement);
     }
 
-    public void update(int y, int x) {
-        long cellData = map.getRawDataAt(y, x);
-        String info = String.format("Landscape type: %s"
+    public void update(int x, int y) {
+        long cellData = map.getRawDataAt(x, y);
+        String info = String.format("Raw: %s\n"
+                        + "\n Raw value: %s\n\n"
+                        + "\n Landscape type as string: %s"
+                        + "\n Landscape type: %s"
                         + "\n "
+                        + "\n x : %s; y : %s"
                         + "\n Human type: %s"
                         + "\n Human age: %s"
                         + "\n Human energy: %s"
@@ -64,7 +68,11 @@ public class CellInfoPanel {
                         + "\n "
                         + "\n Active flag (Human): %s"
                         + "\n Active flag (Plant): %s",
+                XFormatter.formatRaw(cellData),
+                cellData,
+                UcfCoder.decodeLandscapeTypeAsString(cellData),
                 UcfCoder.decodeLandscapeType(cellData),
+                x, y,
                 UcfCoder.decodeHumanType(cellData),
                 XFormatter.formatDate(UcfCoder.decodeHumanAge(cellData)),
                 UcfCoder.decodeHumanEnergy(cellData),
@@ -74,7 +82,7 @@ public class CellInfoPanel {
                 UcfCoder.decodePlantFruits(cellData),
                 UcfCoder.decodeActiveFlagHuman(cellData),
                 UcfCoder.decodeActiveFlagPlant(cellData));
-        baseElement.setText(XFormatter.formatRaw(cellData) + "\n\n" + info);
+        baseElement.setText(info);
     }
 
     public void reset() {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.assets.AssetsLoader;
+import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.logic.force.Force;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
@@ -26,9 +27,13 @@ public class ControlPanel {
     private TextButton playButton;
     private TextButton stopButton;
     private TextButton pauseButton;
+    private TextButton generateButton;
 
     @Autowired
     private AssetsLoader assetsLoader;
+
+    @Autowired
+    private Map map;
 
     @Autowired
     private ContextContainer context;
@@ -48,6 +53,20 @@ public class ControlPanel {
         initPlayButton(skin);
         initStopButton(skin);
         initPauseButton(skin);
+        initGenerateButton(skin);
+    }
+
+    private void initGenerateButton(Skin skin) {
+        generateButton = new TextButton("GENERATE", skin);
+        generateButton.setBounds(1300, context.translateY(Gdx.graphics.getHeight() - 100), 200, 50);
+        generateButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+               map.generateLandscape();
+            }
+        });
+
     }
 
 
@@ -106,5 +125,6 @@ public class ControlPanel {
         stage.addActor(pauseButton);
         stage.addActor(stopButton);
         stage.addActor(playButton);
+        stage.addActor(generateButton);
     }
 }

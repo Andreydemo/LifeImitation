@@ -48,7 +48,7 @@ public class MapRender {
                     int selectedY = (int) ((y - mapPositionY) / cellHeight);
                     map.setSelectedX(selectedX);
                     map.setSelectedY(selectedY);
-                    infoPanelContainer.getCellInfoPanel().update(selectedY, selectedX);
+                    infoPanelContainer.getCellInfoPanel().update(selectedX, selectedY);
                     System.out.println("Selected x: " + selectedX + " | Selected y: " + selectedY);
                 }
             }
