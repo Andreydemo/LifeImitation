@@ -7,17 +7,17 @@ import com.demosoft.life.imitation.entity.UcfCoder;
  */
 public class CellRenderer {
 
-    public final static int COMMON_COLOR_EMPTY               = 0xF0F0F0;
-    public final static int COMMON_COLOR_UNDEFINED           = 0xC22E35;
-    public final static int LANDSCAPE_TYPE_COLOR_WATER_LOW   = 0x60A4B1;
-    public final static int LANDSCAPE_TYPE_COLOR_WATER_HIGH  = 0x6CB8C6;
-    public final static int LANDSCAPE_TYPE_COLOR_GROUND_LOW  = 0xDDB985;
-    public final static int LANDSCAPE_TYPE_COLOR_GROUND_HIGH = 0xD1AF7D;
-    public final static int LANDSCAPE_TYPE_COLOR_GRASS_LOW   = 0xB3D77E;
-    public final static int LANDSCAPE_TYPE_COLOR_GRASS_HIGH  = 0xA8C976;
-    public final static int HUMAN_TYPE_COLOR_MAN             = 0x1D8EA3;
-    public final static int HUMAN_TYPE_COLOR_WOMAN           = 0xB82C8F;
-    public final static int TREE_TYPE_COLOR_APPLE            = 0x62B122;
+    public final static int COMMON_COLOR_EMPTY               = 0xF0F0F0FF;
+    public final static int COMMON_COLOR_UNDEFINED           = 0xC22E3500;
+    public final static int LANDSCAPE_TYPE_COLOR_WATER_LOW   = 0x60A4B1FF;
+    public final static int LANDSCAPE_TYPE_COLOR_WATER_HIGH  = 0x6CB8C6FF;
+    public final static int LANDSCAPE_TYPE_COLOR_GROUND_LOW  = 0xDDB985FF;
+    public final static int LANDSCAPE_TYPE_COLOR_GROUND_HIGH = 0xD1AF7DFF;
+    public final static int LANDSCAPE_TYPE_COLOR_GRASS_LOW   = 0xB3D77EFF;
+    public final static int LANDSCAPE_TYPE_COLOR_GRASS_HIGH  = 0xA8C976FF;
+    public final static int HUMAN_TYPE_COLOR_MAN             = 0x1D8EA3FF;
+    public final static int HUMAN_TYPE_COLOR_WOMAN           = 0xB82C8FFF;
+    public final static int TREE_TYPE_COLOR_APPLE            = 0x62B122FF;
 
     public static int getBackgroundColor(long cellData) {
         int color = COMMON_COLOR_EMPTY;
@@ -93,17 +93,16 @@ public class CellRenderer {
         return color;
     }
 
-    /**
-     * ?????
-     * @param cellData
-     * @return
-     */
-    public static char getUnit(long cellData) {
+
+    private static char getUnit(long cellData) {
         char unit = ' ';
         int humanType = UcfCoder.decodeHumanType(cellData);
         int plantType = UcfCoder.decodePlantType(cellData);
-        if (humanType != UcfCoder.HUMAN_TYPE_EMPTY || plantType != UcfCoder.PLANT_TYPE_EMPTY) {
+        if (humanType != UcfCoder.HUMAN_TYPE_EMPTY) {
             unit = 'E';
+        }
+        if (plantType != UcfCoder.PLANT_TYPE_EMPTY) {
+            unit = 'F';
         }
         return unit;
     }

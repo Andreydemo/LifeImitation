@@ -62,6 +62,7 @@ public class MapRender {
 
         drawBackgroundMap();
         drawForegroundMap();
+        drawHumansAndPlants();
         drawBorder();
         drawSelected();
     }
@@ -93,6 +94,22 @@ public class MapRender {
         }
         shapeRenderer.end();
     }
+
+    private void drawHumansAndPlants() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (int x = 0; x < map.getSize(); x++) {
+            for (int y = 0; y < map.getSize(); y++) {
+                shapeRenderer.setColor(new Color(CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue())));
+                shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
+
+
+            }
+        }
+        shapeRenderer.end();
+    }
+
+
 
     private void drawBorder() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
