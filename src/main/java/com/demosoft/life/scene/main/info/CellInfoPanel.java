@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.UcfCoder;
+import com.demosoft.life.imitation.entity.type.Plant;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.spring.ContextContainer;
@@ -64,6 +65,7 @@ public class CellInfoPanel {
                         + "\n Human pregnancy: %s"
                         + "\n "
                         + "\n Plant type: %s"
+                        + "\n Plant name: %s"
                         + "\n Plant fruits: %s"
                         + "\n "
                         + "\n Active flag (Human): %s"
@@ -79,6 +81,7 @@ public class CellInfoPanel {
                 UcfCoder.decodeHumanSatiety(cellData),
                 XFormatter.formatDate(UcfCoder.decodeHumanPregnancy(cellData)),
                 UcfCoder.decodePlantType(cellData),
+                Plant.decodeAndGetByValue(cellData).getMessage(),
                 UcfCoder.decodePlantFruits(cellData),
                 UcfCoder.decodeActiveFlagHuman(cellData),
                 UcfCoder.decodeActiveFlagPlant(cellData));

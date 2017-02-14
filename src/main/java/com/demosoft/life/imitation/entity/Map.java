@@ -1,8 +1,11 @@
 package com.demosoft.life.imitation.entity;
 
 import com.demosoft.life.imitation.entity.impl.CellImpl;
+import com.demosoft.life.imitation.entity.type.Human;
 import com.demosoft.life.imitation.entity.type.Landscape;
+import com.demosoft.life.imitation.entity.type.Plant;
 import com.demosoft.life.logic.math.XMath;
+import com.demosoft.life.logic.random.XRandom;
 
 import java.util.Random;
 
@@ -13,6 +16,7 @@ public class Map {
 
     public final static int MAP_SIZE = 65;
     public final static int CELL_SIZE = 10;
+    public static final int TREES_TO_PLACE = 20;
 
     private int size;
 
@@ -22,6 +26,14 @@ public class Map {
 
     private int selectedY;
     private int selectedX;
+
+    public Map() {
+        this.size = MAP_SIZE;
+        cells = new Cell[size][size];
+        generateLandscape();
+        placeTrees(20);
+        placePeoples(10, 10);
+    }
 
     public Map(int size) {
         this.size = size;
@@ -146,43 +158,167 @@ public class Map {
     }
 
     public void generateLandscape() {
-        try {
+        setValueAt(Landscape.LANDSCAPE_MAX_VALUE, 0, 0);
+        setValueAt(Landscape.LANDSCAPE_MAX_VALUE, 0, size - 1);
+        setValueAt(Landscape.LANDSCAPE_MAX_VALUE, size - 1, 0);
+        setValueAt(Landscape.LANDSCAPE_MAX_VALUE, size - 1, size - 1);
+        float landscapeShift = 20;
+        for (int bigStep = size - 1; bigStep >= 2; bigStep /= 2, landscapeShift /= 2.0f) {
+            int smallStep = bigStep / 2;
+            //diamond step
+            diamondStep(landscapeShift, bigStep, smallStep);
+            //square step
+            squareStep(landscapeShift, bigStep, smallStep);
+        }
+    }
 
+    public void placePeoples(int menCount, int womanCount) {
+        cleanHumans();
+        for (int i = 0; i < menCount; i++) {
+            if (menCount > 0) {
+                menCount = tryGenerateMens(menCount);
 
-            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, 0, 0);
-            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, 0, size - 1);
-            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, size - 1, 0);
-            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, size - 1, size - 1);
-            float landscapeShift = 20;
-            for (int bigStep = size - 1; bigStep >= 2; bigStep /= 2, landscapeShift /= 2.0f) {
-                int smallStep = bigStep / 2;
-                //diamond step
-                for (int x = smallStep; x < this.size; x += bigStep) {
-                    for (int y = smallStep; y < this.size; y += bigStep) {
-                        long topLeftValue = getValueAt(x - smallStep, y - smallStep).getValue();
-                        long topRightValue = getValueAt(x + smallStep, y - smallStep).getValue();
-                        long bottomLeftValue = getValueAt(x - smallStep, y + smallStep).getValue();
-                        long bottomRightValue = getValueAt(x + smallStep, y + smallStep).getValue();
-                        float average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4;
-                        int centralValue = (int) (average + random.nextInt(3) * landscapeShift - landscapeShift); // -landscapeShift 0 landscapeShift
-                        setValueAt(getValueInRange(centralValue, 1, Landscape.LANDSCAPE_MAX_VALUE), x, y);
-                    }
-                }
-                //square step
-                for (int x = 0; x < this.size; x += smallStep) {
-                    for (int y = (x + smallStep) % bigStep; y < this.size; y += bigStep) {
-                        long topValue = getValueAt((y - smallStep + this.size - 1) % (this.size - 1), x).getValue();
-                        long leftValue = (int) getValueAt(y, (x - smallStep + this.size - 1) % (this.size - 1)).getValue();
-                        long rightValue = (int) getValueAt(y, (x + smallStep) % (this.size - 1)).getValue();
-                        long bottomValue = (int) getValueAt((y + smallStep) % (this.size - 1), x).getValue();
-                        float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
-                        int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1, Landscape.LANDSCAPE_MAX_VALUE);
-                        setValueAt(centerValue, y, x);
+            } else {
+                break;
+            }
+        }
+
+        for (int i = 0; i < womanCount; i++) {
+            if (womanCount > 0) {
+                womanCount = tryGenerateWomans(womanCount);
+
+            } else {
+                break;
+            }
+        }
+    }
+
+    private int tryGenerateWomans(int menCount) {
+        for (Cell[] cellRow : cells) {
+            for (Cell cell : cellRow) {
+                Landscape landscape = Landscape.decodeAndGetByValue(cell.getValue());
+                Human human = Human.decodeAndGetByValue(cell.getValue());
+                if (!landscape.isRockBlock() && !landscape.isWatterBlock() && human == Human.HUMAN_TYPE_EMPTY) {
+                    if (XRandom.generateBoolean(1) && menCount > 0) {
+                        menCount--;
+                        placeWoman(cell);
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        return menCount;
+    }
+
+    private void placeWoman(Cell cell) {
+        cell.setValue(UcfCoder.encodeHumanType(cell.getValue(), Human.HUMAN_TYPE_WOMAN.getValue()));
+        initHuman(cell);
+    }
+
+    private void initHuman(Cell cell) {
+        cell.setValue(UcfCoder.encodeHumanAge(cell.getValue(), 30));
+        cell.setValue(UcfCoder.encodeHumanEnergy(cell.getValue(), 63));
+        cell.setValue(UcfCoder.encodeHumanSatiety(cell.getValue(), 63));
+    }
+
+    private int tryGenerateMens(int menCount) {
+        for (Cell[] cellRow : cells) {
+            for (Cell cell : cellRow) {
+                Landscape landscape = Landscape.decodeAndGetByValue(cell.getValue());
+                Human human = Human.decodeAndGetByValue(cell.getValue());
+                if (!landscape.isRockBlock() && !landscape.isWatterBlock() && human == Human.HUMAN_TYPE_EMPTY) {
+                    if (XRandom.generateBoolean(1) && menCount > 0) {
+                        menCount--;
+                        placeMan(cell);
+                    }
+                }
+            }
+        }
+        return menCount;
+    }
+
+    private void placeMan(Cell cell) {
+        cell.setValue(UcfCoder.encodeHumanType(cell.getValue(), Human.HUMAN_TYPE_MAN.getValue()));
+        initHuman(cell);
+    }
+
+    private void cleanHumans() {
+        for (Cell[] cellRow : cells) {
+            for (Cell cell : cellRow) {
+                if (Human.decodeAndGetByValue(cell.getValue()) != Human.HUMAN_TYPE_EMPTY) {
+                    cell.setValue(UcfCoder.encodeHumanType(cell.getValue(), Human.HUMAN_TYPE_EMPTY.getValue()));
+                }
+            }
+        }
+    }
+
+    public void placeTrees(int treesToPlace) {
+        cleanTrees();
+        for (int i = 0; i < treesToPlace; i++) {
+            if (treesToPlace > 0) {
+                treesToPlace = tryGeneratePlant(treesToPlace);
+
+            } else {
+                break;
+            }
+        }
+    }
+
+    private void cleanTrees() {
+        for (Cell[] cellRow : cells) {
+            for (Cell cell : cellRow) {
+                if (Plant.decodeAndGetByValue(cell.getValue()) != Plant.PLANT_TYPE_EMPTY) {
+                    cell.setValue(UcfCoder.encodePlantType(cell.getValue(), Plant.PLANT_TYPE_EMPTY.getValue()));
+                }
+            }
+        }
+    }
+
+    private int tryGeneratePlant(int treesToPlace) {
+        for (Cell[] cellRow : cells) {
+            for (Cell cell : cellRow) {
+                Landscape landscape = Landscape.decodeAndGetByValue(cell.getValue());
+                if (!landscape.isRockBlock() && !landscape.isWatterBlock()) {
+                    if (XRandom.generateBoolean(1) && treesToPlace > 0) {
+                        treesToPlace--;
+                        placeTree(cell);
+                    }
+                }
+            }
+        }
+        return treesToPlace;
+    }
+
+    private void placeTree(Cell cell) {
+        Plant plant = Plant.getByValue(XRandom.generateInteger(1, 3));
+        cell.setValue(UcfCoder.encodePlantType(cell.getValue(), plant.getValue()));
+        cell.setValue(UcfCoder.encodePlantFruits(cell.getValue(), 30));
+    }
+
+    private void diamondStep(float landscapeShift, int bigStep, int smallStep) {
+        for (int x = smallStep; x < this.size; x += bigStep) {
+            for (int y = smallStep; y < this.size; y += bigStep) {
+                long topLeftValue = getValueAt(x - smallStep, y - smallStep).getValue();
+                long topRightValue = getValueAt(x + smallStep, y - smallStep).getValue();
+                long bottomLeftValue = getValueAt(x - smallStep, y + smallStep).getValue();
+                long bottomRightValue = getValueAt(x + smallStep, y + smallStep).getValue();
+                float average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4;
+                int centralValue = (int) (average + random.nextInt(3) * landscapeShift - landscapeShift); // -landscapeShift 0 landscapeShift
+                setValueAt(getValueInRange(centralValue, 1, Landscape.LANDSCAPE_MAX_VALUE), x, y);
+            }
+        }
+    }
+
+    private void squareStep(float landscapeShift, int bigStep, int smallStep) {
+        for (int x = 0; x < this.size; x += smallStep) {
+            for (int y = (x + smallStep) % bigStep; y < this.size; y += bigStep) {
+                long topValue = getValueAt((y - smallStep + this.size - 1) % (this.size - 1), x).getValue();
+                long leftValue = (int) getValueAt(y, (x - smallStep + this.size - 1) % (this.size - 1)).getValue();
+                long rightValue = (int) getValueAt(y, (x + smallStep) % (this.size - 1)).getValue();
+                long bottomValue = (int) getValueAt((y + smallStep) % (this.size - 1), x).getValue();
+                float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
+                int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1, Landscape.LANDSCAPE_MAX_VALUE);
+                setValueAt(centerValue, y, x);
+            }
         }
     }
 

@@ -19,7 +19,11 @@ public class Launcher {
         cfg.resizable = false;
         System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
         LifeImitationApplication game = new LifeImitationApplication();
-        new LwjglApplication(game, cfg);
+        try {
+            new LwjglApplication(game, cfg);
+        } catch (Throwable e) {
+            System.exit(0);
+        }
     }
 
 }

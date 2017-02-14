@@ -22,7 +22,8 @@ public class MainSceneConfig {
 
     @Bean
     Map map() {
-        Map map = new Map( mapLoader().load());
+        //Map map = new Map( mapLoader().load());
+        Map map = new Map();
         return map;
     }
 

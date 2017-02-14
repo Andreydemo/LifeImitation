@@ -5,6 +5,8 @@ import com.demosoft.life.imitation.entity.type.Human;
 import com.demosoft.life.imitation.entity.type.Landscape;
 import com.demosoft.life.imitation.entity.type.Plant;
 
+import java.util.Optional;
+
 /**
  * Created by Andrii_Korkoshko on 1/24/2017.
  */
@@ -12,12 +14,6 @@ public class CellRenderer {
 
     public final static int COMMON_COLOR_EMPTY = 0xF0F0F0FF;
     public final static int COMMON_COLOR_UNDEFINED = 0xC22E3500;
-    public final static int LANDSCAPE_TYPE_COLOR_WATER_LOW = 0x60A4B1FF;
-    public final static int LANDSCAPE_TYPE_COLOR_WATER_HIGH = 0x6CB8C6FF;
-    public final static int LANDSCAPE_TYPE_COLOR_GROUND_LOW = 0xDDB985FF;
-    public final static int LANDSCAPE_TYPE_COLOR_GROUND_HIGH = 0xD1AF7DFF;
-    public final static int LANDSCAPE_TYPE_COLOR_GRASS_LOW = 0xB3D77EFF;
-    public final static int LANDSCAPE_TYPE_COLOR_GRASS_HIGH = 0xA8C976FF;
     public final static int HUMAN_TYPE_COLOR_MAN = 0x1D8EA3FF;
     public final static int HUMAN_TYPE_COLOR_WOMAN = 0xB82C8FFF;
     public final static int TREE_TYPE_COLOR_APPLE = 0x62B122FF;
@@ -34,8 +30,8 @@ public class CellRenderer {
         return color;
     }
 
-    public static int getForegroundColor(long cellData) {
-        int color = COMMON_COLOR_EMPTY;
+    public static Optional<Integer> getForegroundColor(long cellData) {
+        Integer color = COMMON_COLOR_EMPTY;
         int humanType = UcfCoder.decodeHumanType(cellData);
         int plantType = UcfCoder.decodePlantType(cellData);
         if (humanType != Human.HUMAN_TYPE_EMPTY.getValue()) {
@@ -47,15 +43,12 @@ public class CellRenderer {
                 color = COMMON_COLOR_UNDEFINED;
             }
         } else if (plantType != Plant.PLANT_TYPE_EMPTY.getValue()) {
-            if (plantType == Plant.PLANT_TYPE_APPLE.getValue()) {
-                color = TREE_TYPE_COLOR_APPLE;
-            } else {
-                color = COMMON_COLOR_UNDEFINED;
-            }
+
+            color = Plant.getByValue(plantType).getColor();
         } else {
-            color = COMMON_COLOR_UNDEFINED;
+            return Optional.empty();
         }
-        return color;
+        return Optional.of(color);
     }
 
 }

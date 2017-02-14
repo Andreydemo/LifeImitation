@@ -9,6 +9,8 @@ import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 /**
  * Created by Andrii_Korkoshko on 1/24/2017.
  */
@@ -86,9 +88,11 @@ public class MapRender {
 
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
-                shapeRenderer.setColor(new Color(CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue())));
-                shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
-
+                Optional<Integer> foregroundColor = CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue());
+                if (foregroundColor.isPresent()) {
+                    shapeRenderer.setColor(new Color(foregroundColor.get()));
+                    shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
+                }
 
             }
         }
@@ -100,15 +104,16 @@ public class MapRender {
 
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
-                shapeRenderer.setColor(new Color(CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue())));
-                shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
-
+                Optional<Integer> foregroundColor = CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue());
+                if(foregroundColor.isPresent()) {
+                    shapeRenderer.setColor(new Color(foregroundColor.get()));
+                    shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
+                }
 
             }
         }
         shapeRenderer.end();
     }
-
 
 
     private void drawBorder() {

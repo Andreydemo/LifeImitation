@@ -32,4 +32,9 @@ public class XFormatter {
         return String.format("%04d.%02d.%02d", years, months % 10, days % 30);
     }
 
+    public static String hex(long n) {
+        // call toUpperCase() if that's required
+        return String.format("0x%8s", Long.toHexString(n)).replace(' ', '0');
+    }
+
 }

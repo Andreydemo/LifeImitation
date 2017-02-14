@@ -66,7 +66,7 @@ public class MainScreen extends BaseScene {
 
 
         stage.setFlipped(true);
-        stage.setDebugAll(true);
+        //stage.setDebugAll(true);
 
 
         stage.addListener(new ClickListener() {
