@@ -149,11 +149,11 @@ public class Map {
         try {
 
 
-            setValueAt(Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue(), 0, 0);
-            setValueAt(Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue(), 0, size - 1);
-            setValueAt(Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue(), size - 1, 0);
-            setValueAt(Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue(), size - 1, size - 1);
-            float landscapeShift = 5;
+            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, 0, 0);
+            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, 0, size - 1);
+            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, size - 1, 0);
+            setValueAt(Landscape.LANDSCAPE_MAX_VALUE, size - 1, size - 1);
+            float landscapeShift = 20;
             for (int bigStep = size - 1; bigStep >= 2; bigStep /= 2, landscapeShift /= 2.0f) {
                 int smallStep = bigStep / 2;
                 //diamond step
@@ -164,8 +164,8 @@ public class Map {
                         long bottomLeftValue = getValueAt(x - smallStep, y + smallStep).getValue();
                         long bottomRightValue = getValueAt(x + smallStep, y + smallStep).getValue();
                         float average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4;
-                        int centralValue =1 + (int) (average + random.nextInt(3) * landscapeShift - landscapeShift); // -landscapeShift 0 landscapeShift
-                        setValueAt(centralValue, x, y);
+                        int centralValue = (int) (average + random.nextInt(3) * landscapeShift - landscapeShift); // -landscapeShift 0 landscapeShift
+                        setValueAt(getValueInRange(centralValue, 1, Landscape.LANDSCAPE_MAX_VALUE), x, y);
                     }
                 }
                 //square step
@@ -176,12 +176,12 @@ public class Map {
                         long rightValue = (int) getValueAt(y, (x + smallStep) % (this.size - 1)).getValue();
                         long bottomValue = (int) getValueAt((y + smallStep) % (this.size - 1), x).getValue();
                         float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
-                        int centerValue = 1 + getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1, 15);
+                        int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1, Landscape.LANDSCAPE_MAX_VALUE);
                         setValueAt(centerValue, y, x);
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

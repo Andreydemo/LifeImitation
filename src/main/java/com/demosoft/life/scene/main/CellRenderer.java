@@ -25,19 +25,9 @@ public class CellRenderer {
     public static int getBackgroundColor(long cellData) {
         int color = COMMON_COLOR_EMPTY;
         int landscapeType = UcfCoder.decodeLandscapeType(cellData);
-        if (landscapeType == Landscape.LANDSCAPE_TYPE_WATER_LOW.getValue()) {
-            color = LANDSCAPE_TYPE_COLOR_WATER_LOW;
-        } else if (landscapeType == Landscape.LANDSCAPE_TYPE_WATER_HIGH.getValue()) {
-            color = LANDSCAPE_TYPE_COLOR_WATER_HIGH;
-        } else if (landscapeType == Landscape.LANDSCAPE_TYPE_GROUND_LOW.getValue()) {
-            color = LANDSCAPE_TYPE_COLOR_GROUND_LOW;
-        } else if (landscapeType == Landscape.LANDSCAPE_TYPE_GROUND_HIGH.getValue()) {
-            color = LANDSCAPE_TYPE_COLOR_GROUND_HIGH;
-        } else if (landscapeType == Landscape.LANDSCAPE_TYPE_GRASS_LOW.getValue()) {
-            color = LANDSCAPE_TYPE_COLOR_GRASS_LOW;
-        } else if (landscapeType == Landscape.LANDSCAPE_TYPE_GRASS_HIGH.getValue()) {
-            color = LANDSCAPE_TYPE_COLOR_GRASS_HIGH;
-
+        Landscape landscape = Landscape.getByValue(landscapeType);
+        if (landscape != null) {
+            color = landscape.getColor();
         } else {
             color = COMMON_COLOR_UNDEFINED;
         }

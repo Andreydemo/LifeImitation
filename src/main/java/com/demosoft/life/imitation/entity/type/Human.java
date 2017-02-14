@@ -24,22 +24,22 @@ public enum Human {
         return value;
     }
     public final static long HUMAN_TYPE_MASK = 0x0000_0000_0000_0018L;
-    public final static int HUMAN_TYPE_SHIFT = 3;
+    public final static int HUMAN_TYPE_SHIFT = 4;
 
 
     // HUMAN - AGE
     public final static long HUMAN_AGE_MASK           = 0x0000_0000_000F_FFE0L;
-    public final static int HUMAN_AGE_SHIFT           = 5;
+    public final static int HUMAN_AGE_SHIFT           = 6;
     // HUMAN - ENERGY
     public final static long HUMAN_ENERGY_MASK        = 0x0000_0000_03F0_0000L;
-    public final static int HUMAN_ENERGY_SHIFT        = 20;
+    public final static int HUMAN_ENERGY_SHIFT        = 21;
     // HUMAN - SATIETY
     public final static long HUMAN_SATIETY_MASK       = 0x0000_0000_FC00_0000L;
-    public final static int HUMAN_SATIETY_SHIFT       = 26;
+    public final static int HUMAN_SATIETY_SHIFT       = 27;
     // HUMAN - PREGNANCY
     public final static long HUMAN_PREGNANCY_MASK     = 0x0000_01FF_0000_0000L;
-    public final static int HUMAN_PREGNANCY_SHIFT     = 32;
+    public final static int HUMAN_PREGNANCY_SHIFT     = 33;
 
     public final static long ACTIVE_FLAG_HUMAN_MASK   = 0x4000_0000_0000_0000L;
-    public final static int ACTIVE_FLAG_HUMAN_SHIFT   = 62;
+    public final static int ACTIVE_FLAG_HUMAN_SHIFT   = 63;
 }
