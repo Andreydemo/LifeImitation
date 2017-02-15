@@ -263,8 +263,10 @@ public class Force {
     // HUMAN - MOVE
     private boolean tryToMove(long cellData, int y, int x, int yShift, int xShift) {
         if (yShift == 0 && xShift == 0) {
-            yShift = XRandom.generateInteger(-1, 1);
-            xShift = XRandom.generateInteger(-1, 1);
+            do {
+                yShift = XRandom.generateInteger(-1, 1);
+                xShift = XRandom.generateInteger(-1, 1);
+            } while (!isCellInMapRange(x + xShift, y + yShift));
         }
         if (yShift != 0 || xShift != 0) {
             int yTarget = y + yShift;

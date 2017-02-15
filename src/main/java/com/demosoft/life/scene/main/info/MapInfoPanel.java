@@ -89,7 +89,12 @@ public class MapInfoPanel {
                 Statistic.getPlantsLandDensity(),
                 Statistic.getPlantsFruitsMean(),
                 Statistic.getPlantsFruitsPeopleRatio());
-        this.baseElement.setText(info);
+        try {
+
+            this.baseElement.setText(info);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
 

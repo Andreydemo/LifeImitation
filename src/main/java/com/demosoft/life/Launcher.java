@@ -12,7 +12,7 @@ public class Launcher {
     public static void main(String[] args) {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "FlatMedievalWorld";
-        cfg.useGL30 = true;
+       // cfg.useGL30 = true;
         cfg.width = 1920;
         cfg.height = 1024;
         cfg.y = 50;

@@ -8,7 +8,7 @@
     <artifactId>com.demosoft.life</artifactId>
     <version>1.0</version>
     <properties>
-        <gdx.version>1.9.5</gdx.version>
+        <gdx.version>1.9.4</gdx.version>
     </properties>
 
     <dependencies>

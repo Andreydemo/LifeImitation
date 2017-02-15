@@ -5,6 +5,8 @@ package com.demosoft.life.scene;
  */
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -64,5 +66,25 @@ public class FlippedStage extends Stage {
         this.flipped = flipped;
     }
 
+    @Override
+    public void draw() {
+        Camera camera = this.getViewport().getCamera();
+        camera.update();
+        if(this.getRoot().isVisible()) {
+            Batch batch = this.getBatch();
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            try {
+                this.getRoot().draw(batch, 1.0F);
+            }catch (Throwable e){
+                e.printStackTrace();
+            }
+            batch.end();
+            /*if(debug) {
+                this.drawDebug();
+            }*/
+
+        }
+    }
 }
 

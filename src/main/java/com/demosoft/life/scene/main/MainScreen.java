@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -63,11 +64,24 @@ public class MainScreen extends BaseScene {
         stage.addListener(mapRender.clickListener);
 
 
-
-
         stage.setFlipped(true);
         //stage.setDebugAll(true);
-
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean scrolled(InputEvent event, float x, float y, int amount) {
+                System.out.println("stage SCROLLED");
+                for (Actor act : stage.getRoot().getChildren()) {
+                    if(act instanceof ScrollPane){
+                        act.getListeners().forEach(it -> {if(it instanceof InputListener){
+                            InputListener il = (InputListener) it;
+                            il.scrolled(event,x,y,amount);
+                        }
+                        });
+                    }
+                }
+                return super.scrolled(event, x, y, amount);
+            }
+        });
 
         stage.addListener(new ClickListener() {
             @Override
@@ -131,24 +145,29 @@ public class MainScreen extends BaseScene {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        context.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        stage.getBatch().setProjectionMatrix(context.camera.combined);
-        stage.act();
-        stage.draw();
-        context.camera.update();
-        mapRender.render();
-        context.drawPosition();
+        try {
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            context.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            stage.getBatch().setProjectionMatrix(context.camera.combined);
+            stage.act();
+            infoPanelContainer.getEventsInfoPanel().act(Gdx.graphics.getDeltaTime());
+            stage.draw();
+            context.camera.update();
+            mapRender.render();
+            context.drawPosition();
 
-        for (Actor act : stage.getRoot().getChildren()) {
-            if (act instanceof SelectBox) {
-                // System.out.println(((SelectBox)act).getX() + " " + ((SelectBox)act).getY());
+            for (Actor act : stage.getRoot().getChildren()) {
+                if (act instanceof SelectBox) {
+                    // System.out.println(((SelectBox)act).getX() + " " + ((SelectBox)act).getY());
+                }
             }
-        }
 
-        super.render(delta);
-        context.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        // System.out.println((context.camera.position + " " + (float) (screenBg.getX() + screenBg.getWidth() / 2) + ":" + (float) (screenBg.getY() + screenBg.getHeight() / 2)));
+            super.render(delta);
+            context.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            // System.out.println((context.camera.position + " " + (float) (screenBg.getX() + screenBg.getWidth() / 2) + ":" + (float) (screenBg.getY() + screenBg.getHeight() / 2)));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
