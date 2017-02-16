@@ -1,6 +1,6 @@
 package com.demosoft.life.imitation.entity.type;
 
-import com.demosoft.life.imitation.entity.UcfCoder;
+import com.demosoft.life.imitation.entity.impl.UcfCoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Andrii_Korkoshko on 2/13/2017.
  */
-public enum Plant {
+public enum PlantType {
     PLANT_TYPE_EMPTY(0x0, "Empty", 0xF0F0F0FF),
     PLANT_TYPE_APPLE(0x1, "Apple", 0x2F6900FF),
     PLANT_TYPE_CHERY(0x2, "Chery", 0x812E00FF),
@@ -19,7 +19,7 @@ public enum Plant {
     private int color;
     private String message;
 
-    Plant(int value, String message, int color) {
+    PlantType(int value, String message, int color) {
         this.value = value;
         this.message = message;
         this.color = color;
@@ -37,12 +37,12 @@ public enum Plant {
         return color;
     }
 
-    public static Plant getByValue(int value) {
-        List<Plant> collect = Arrays.stream(Plant.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
+    public static PlantType getByValue(int value) {
+        List<PlantType> collect = Arrays.stream(PlantType.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
         return collect.size() > 0 ? collect.get(0) : PLANT_TYPE_EMPTY;
     }
 
-    public static Plant decodeAndGetByValue(long value) {
+    public static PlantType decodeAndGetByValue(long value) {
         return getByValue(UcfCoder.decodePlantType(value));
     }
 

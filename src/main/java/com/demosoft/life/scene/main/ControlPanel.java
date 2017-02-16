@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
+import com.demosoft.life.imitation.entity.impl.MapImpl;
 import com.demosoft.life.logic.force.Force;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
@@ -60,6 +62,9 @@ public class ControlPanel {
     @Autowired
     InfoPanelContainer infoPanelContainer;
 
+    @Autowired
+    private GraphicMapFactory graphicMapFactory;
+
     @PostConstruct
     void init() {
         Skin skin = assetsLoader.getSkin(MainScreen.UISKIN);
@@ -72,13 +77,13 @@ public class ControlPanel {
     }
 
     private void initGenerateButton(Skin skin) {
-        generateLandScapeButton = new TextButton("GENERATE Landscape", skin);
+        generateLandScapeButton = new TextButton("GENERATE LandscapeType", skin);
         generateLandScapeButton.setBounds(1300, context.translateY(Gdx.graphics.getHeight() - 125), 200, 25);
         generateLandScapeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                map.generateLandscape();
+                graphicMapFactory.generateLandscape(map);
             }
         });
 
@@ -99,8 +104,7 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
-                map.placeTrees(Integer.valueOf(plantsCount.getText()));
+                graphicMapFactory.generatePlants(map, Integer.valueOf(plantsCount.getText()));
             }
         });
 
@@ -130,7 +134,7 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                map.placePeoples(Integer.valueOf(humansMenCount.getText()), Integer.valueOf(humansWomanCount.getText()));
+                graphicMapFactory.generatePeoples(map, Integer.valueOf(humansMenCount.getText()), Integer.valueOf(humansWomanCount.getText()));
             }
         });
 

@@ -1,6 +1,6 @@
 package com.demosoft.life.imitation.entity.type;
 
-import com.demosoft.life.imitation.entity.UcfCoder;
+import com.demosoft.life.imitation.entity.impl.UcfCoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Andrii_Korkoshko on 2/13/2017.
  */
-public enum Landscape {
+public enum LandscapeType {
 
     LANDSCAPE_TYPE_EMPTY(0x0, "Empty", 0xF0F0F0FF, true, true),
     LANDSCAPE_TYPE_WATER_LOW(0x1, "Water low", 0x60A4B1FF, true, false),
@@ -55,7 +55,7 @@ public enum Landscape {
         return watterBlock;
     }
 
-    Landscape(int value, String message, int color, boolean watterBlock, boolean rockBlock) {
+    LandscapeType(int value, String message, int color, boolean watterBlock, boolean rockBlock) {
         this.value = value;
         this.message = message;
         this.color = color;
@@ -63,12 +63,12 @@ public enum Landscape {
         this.rockBlock = rockBlock;
     }
 
-    public static Landscape getByValue(int value) {
-        List<Landscape> collect = Arrays.stream(Landscape.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
+    public static LandscapeType getByValue(int value) {
+        List<LandscapeType> collect = Arrays.stream(LandscapeType.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
         return collect.size() > 0 ? collect.get(0) : LANDSCAPE_TYPE_EMPTY;
     }
 
-    public static Landscape decodeAndGetByValue(long value) {
+    public static LandscapeType decodeAndGetByValue(long value) {
        return getByValue(UcfCoder.decodeLandscapeType(value));
     }
 

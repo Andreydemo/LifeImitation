@@ -5,10 +5,10 @@ package com.demosoft.life.imitation.entity;
  */
 public interface Cell {
 
-    long getValue();
+    /*  long getValue();
 
-    void setValue(long Value);
-
+      void setValue(long Value);
+  */
     int getY();
 
     void setY(int y);
@@ -16,5 +16,25 @@ public interface Cell {
     int getX();
 
     void setX(int x);
+
+    void setHuman(Human human);
+
+    Human getHuman();
+
+    void setPlant(Plant plant);
+
+    Plant getPlant();
+
+    void setLandscape(Landscape plant);
+
+    Landscape getLandscape();
+
+    void setActiveFlagHuman(boolean activeFlagHuman);
+
+    boolean getActiveFlagHuman();
+
+    void setActiveFlagPlant(boolean activeFlagPlant);
+
+    boolean getActiveFlagPlant();
 
 }

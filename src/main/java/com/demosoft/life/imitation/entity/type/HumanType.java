@@ -1,6 +1,6 @@
 package com.demosoft.life.imitation.entity.type;
 
-import com.demosoft.life.imitation.entity.UcfCoder;
+import com.demosoft.life.imitation.entity.impl.UcfCoder;
 import com.demosoft.life.scene.format.XFormatter;
 
 import java.util.Arrays;
@@ -10,18 +10,20 @@ import java.util.stream.Collectors;
 /**
  * Created by Andrii_Korkoshko on 2/13/2017.
  */
-public enum Human {
+public enum HumanType {
 
-    HUMAN_TYPE_EMPTY(0x0, "Empty"),
-    HUMAN_TYPE_MAN(0x1, "Man"),
-    HUMAN_TYPE_WOMAN(0x2, "Woman");
+    HUMAN_TYPE_EMPTY(0x0, "Empty", 0xF0F0F0FF),
+    HUMAN_TYPE_MAN(0x1, "Man", 0x1D8EA3FF),
+    HUMAN_TYPE_WOMAN(0x2, "Woman", 0xB82C8FFF);
 
     private int value;
     private String message;
+    private int color;
 
-    Human(int value, String message) {
+    HumanType(int value, String message, int color) {
         this.value = value;
         this.message = message;
+        this.color = color;
     }
 
     public String getMessage() {
@@ -32,15 +34,21 @@ public enum Human {
         return value;
     }
 
-    public static Human getByValue(int value) {
-        List<Human> collect = Arrays.stream(Human.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
+    public int getColor() {
+        return color;
+    }
+
+    public static HumanType getByValue(int value) {
+        List<HumanType> collect = Arrays.stream(HumanType.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
         return collect.size() > 0 ? collect.get(0) : HUMAN_TYPE_EMPTY;
     }
 
-    public static Human decodeAndGetByValue(long value) {
+    public static HumanType decodeAndGetByValue(long value) {
         return getByValue(UcfCoder.decodeHumanType(value));
     }
 
+    public final static int HUMAN_TYPE_MAX = 0x2;
+    public final static int HUMAN_TYPE_MIN = 0x0;
     public final static long HUMAN_TYPE_MASK_BASE = 0x0003L;
     public final static int HUMAN_TYPE_SHIFT = 4;
     public final static long HUMAN_TYPE_MASK = HUMAN_TYPE_MASK_BASE << HUMAN_TYPE_SHIFT;

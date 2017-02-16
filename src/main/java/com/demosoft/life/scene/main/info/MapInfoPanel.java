@@ -35,7 +35,7 @@ public class MapInfoPanel {
         baseElement.setBounds(25, context.translateY(435), 500, 400);
         baseElement.setDisabled(true);
 
-        label = new Label("Map Info", skin);
+        label = new Label("MapImpl Info", skin);
         label.setBounds(25, context.translateY(35), 300, 25);
     }
 

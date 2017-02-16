@@ -6,7 +6,7 @@ import com.demosoft.life.imitation.entity.impl.CellImpl;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import static com.demosoft.life.imitation.entity.Map.MAP_SIZE;
+import static com.demosoft.life.imitation.entity.impl.MapImpl.MAP_SIZE;
 
 /**
  * Created by Andrii_Korkoshko on 2/13/2017.
@@ -19,7 +19,7 @@ public class MapLoader {
     public Cell[][] load() {
         long[][] data = new long[MAP_SIZE][MAP_SIZE];
         Cell[][] cells = new Cell[MAP_SIZE][MAP_SIZE];
-        ObjectInputStream ois = null;
+       /* ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream((getClass().getResourceAsStream(MAP_PATH)));
             data = (long[][]) ois.readObject();
@@ -38,7 +38,7 @@ public class MapLoader {
             for (int y = 0; y < MAP_SIZE; y++) {
                 cells[x][y] = new CellImpl(data[x][y], x, y);
             }
-        }
+        }*/
         return cells;
     }
 }

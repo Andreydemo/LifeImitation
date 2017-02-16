@@ -1,9 +1,11 @@
 package com.demosoft.life.logic.statistic;
 
+import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.UcfCoder;
-import com.demosoft.life.imitation.entity.type.Human;
-import com.demosoft.life.imitation.entity.type.Plant;
+import com.demosoft.life.imitation.entity.impl.MapImpl;
+import com.demosoft.life.imitation.entity.type.HumanType;
+import com.demosoft.life.imitation.entity.type.PlantType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,23 +70,25 @@ public class Statistic {
         int peopleAgeTemp = 0;
         int plantsTemp = 0;
         int plantsFruitsTemp = 0;
-        for (int y = 0; y < Map.MAP_SIZE; y++) {
-            for (int x = 0; x < Map.MAP_SIZE; x++) {
-                if (map.getHumanTypeAt(y, x) != Human.HUMAN_TYPE_EMPTY.getValue()) {
+        for (int y = 0; y < MapImpl.MAP_SIZE; y++) {
+            for (int x = 0; x < MapImpl.MAP_SIZE; x++) {
+                Cell cell = map.getCellAt(x,y);
+                Human human = cell.getHuman();
+                if (human.getType() != HumanType.HUMAN_TYPE_EMPTY) {
                     peopleTemp++;
-                    peopleAgeTemp += map.getHumanAgeAt(y, x);
-                    if (map.getHumanTypeAt(y, x) == Human.HUMAN_TYPE_MAN.getValue()) {
+                    peopleAgeTemp += human.getAge();
+                    if (human.getType() == HumanType.HUMAN_TYPE_MAN) {
                         peopleMenTemp++;
-                    } else if (map.getHumanTypeAt(y, x) == Human.HUMAN_TYPE_WOMAN.getValue()) {
+                    } else if (human.getType() == HumanType.HUMAN_TYPE_WOMAN) {
                         peopleWomenTemp++;
-                        if (map.getHumanPregnancyAt(y, x) != 0) {
+                        if (human.getPregnancy() != 0) {
                             peopleWomenPregnantTemp++;
                         }
                     }
                 }
-                if (map.getPlantTypeAt(y, x) != Plant.PLANT_TYPE_EMPTY.getValue()) {
+                if (cell.getPlant().getType() != PlantType.PLANT_TYPE_EMPTY) {
                     plantsTemp++;
-                    plantsFruitsTemp += map.getPlantFruitsAt(y, x);
+                    plantsFruitsTemp += cell.getPlant().getFruits();
                 }
             }
         }

@@ -4,8 +4,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.UcfCoder;
-import com.demosoft.life.imitation.entity.type.Plant;
+import com.demosoft.life.imitation.entity.impl.CellImpl;
+import com.demosoft.life.imitation.entity.impl.MapImpl;
+import com.demosoft.life.imitation.entity.impl.UcfCoder;
+import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.spring.ContextContainer;
@@ -41,7 +43,7 @@ public class CellInfoPanel {
         baseElement.setBounds(1350, context.translateY(535), 500, 500);
         baseElement.setDisabled(true);
 
-        label = new Label("Cell Info", skin);
+        label = new Label("GraphicCell Info", skin);
         label.setBounds(1350, context.translateY(35), 300, 25);
     }
 
@@ -51,25 +53,25 @@ public class CellInfoPanel {
     }
 
     public void update(int x, int y) {
-        long cellData = map.getRawDataAt(x, y);
+        long cellData =((CellImpl) map.getCellAt(x, y)).getValue();
         String info = String.format("Raw: %s\n"
                         + "\n Raw value: %s\n\n"
-                        + "\n Landscape type as string: %s"
-                        + "\n Landscape type: %s"
+                        + "\n LandscapeType type as string: %s"
+                        + "\n LandscapeType type: %s"
                         + "\n "
                         + "\n x : %s; y : %s"
-                        + "\n Human type: %s"
-                        + "\n Human age: %s"
-                        + "\n Human energy: %s"
-                        + "\n Human satiety: %s"
-                        + "\n Human pregnancy: %s"
+                        + "\n GraphicHuman type: %s"
+                        + "\n GraphicHuman age: %s"
+                        + "\n GraphicHuman energy: %s"
+                        + "\n GraphicHuman satiety: %s"
+                        + "\n GraphicHuman pregnancy: %s"
                         + "\n "
-                        + "\n Plant type: %s"
-                        + "\n Plant name: %s"
-                        + "\n Plant fruits: %s"
+                        + "\n PlantType type: %s"
+                        + "\n PlantType name: %s"
+                        + "\n PlantType fruits: %s"
                         + "\n "
-                        + "\n Active flag (Human): %s"
-                        + "\n Active flag (Plant): %s",
+                        + "\n Active flag (GraphicHuman): %s"
+                        + "\n Active flag (PlantType): %s",
                 XFormatter.formatRaw(cellData),
                 cellData,
                 UcfCoder.decodeLandscapeTypeAsString(cellData),
@@ -81,7 +83,7 @@ public class CellInfoPanel {
                 UcfCoder.decodeHumanSatiety(cellData),
                 XFormatter.formatDate(UcfCoder.decodeHumanPregnancy(cellData)),
                 UcfCoder.decodePlantType(cellData),
-                Plant.decodeAndGetByValue(cellData).getMessage(),
+                PlantType.decodeAndGetByValue(cellData).getMessage(),
                 UcfCoder.decodePlantFruits(cellData),
                 UcfCoder.decodeActiveFlagHuman(cellData),
                 UcfCoder.decodeActiveFlagPlant(cellData));
