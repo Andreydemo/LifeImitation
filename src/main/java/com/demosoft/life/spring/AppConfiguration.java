@@ -32,6 +32,7 @@ public class AppConfiguration {
     }
 
     @Bean
+    @Qualifier("camera")
     OrthographicCamera camera() {
         OrthographicCamera orthographicCamera = new OrthographicCamera();
         orthographicCamera.setToOrtho(true);
@@ -39,18 +40,39 @@ public class AppConfiguration {
     }
 
     @Bean
+    @Qualifier("uiCamera")
+    OrthographicCamera uiCamera() {
+        OrthographicCamera orthographicCamera = new OrthographicCamera();
+        orthographicCamera.setToOrtho(true);
+        return orthographicCamera;
+    }
+
+    @Bean
+    @Qualifier("viewPort")
     Viewport viewPort() {
         return new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera());
     }
 
     @Bean
+    @Qualifier("uiViewPort")
+    Viewport uiViewPort() {
+        return new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), uiCamera());
+    }
+
+    @Bean
     @Qualifier("flippedStage")
-    FlippedStage flippedStage(){
+    FlippedStage flippedStage() {
         return new FlippedStage(viewPort());
     }
 
     @Bean
-    Stage stage(){
-      return new Stage(viewPort());
+    @Qualifier("flippedUiStage")
+    FlippedStage flippedUiStage() {
+        return new FlippedStage(uiViewPort());
+    }
+
+    @Bean
+    Stage stage() {
+        return new Stage(viewPort());
     }
 }

@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.scene.ScreenNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,7 +33,9 @@ public class LoadingScreen extends ScreenAdapter {
     public static final String LOADING_LOADING_FRAME_BG = "loading/loading-frame-bg";
     public static final String LOADING_LOADING_BAR_ANIM = "loading/loading-bar-anim";
     public static final float FRAME_DURATION = 0.05f;
+
     @Autowired
+    @Qualifier("flippedStage")
     private Stage stage;
 
     private Image logo;
@@ -51,6 +54,7 @@ public class LoadingScreen extends ScreenAdapter {
     private AssetManager assetManager;
 
     @Autowired
+    @Qualifier("viewPort")
     private Viewport viewport;
 
     @Autowired

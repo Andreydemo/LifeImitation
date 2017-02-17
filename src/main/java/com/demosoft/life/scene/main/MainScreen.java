@@ -8,15 +8,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.scene.BaseScene;
+import com.demosoft.life.scene.CameraMoveKeyListener;
 import com.demosoft.life.scene.FlippedStage;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -31,7 +32,16 @@ public class MainScreen extends BaseScene {
     private TextureAtlas atlas;
 
     @Autowired
+    @Qualifier("flippedStage")
     private FlippedStage stage;
+
+    @Autowired
+    @Qualifier("flippedUiStage")
+    private FlippedStage uiStage;
+
+    @Autowired
+    private CameraMoveKeyListener cameraMoveKeyListener;
+
     private Skin skin;
     //  private SelectBox<String> selectBox;
     private Vector2 debugPosition = new Vector2(1000, Gdx.graphics.getHeight() - 500);
@@ -57,31 +67,16 @@ public class MainScreen extends BaseScene {
 
         skin = assetsLoader.getSkin(UISKIN);
         atlas = new TextureAtlas(Gdx.files.internal("ui/newUi.pack"));
-        initScreenBg();
 
-        controlPanel.addToStage(stage);
-        infoPanelContainer.addToStage(stage);
+        controlPanel.addToStage(uiStage);
+        infoPanelContainer.addToStage(uiStage);
+
         stage.addListener(mapRender.clickListener);
 
 
         stage.setFlipped(true);
+        uiStage.setFlipped(false);
         //stage.setDebugAll(true);
-        stage.addListener(new InputListener() {
-            @Override
-            public boolean scrolled(InputEvent event, float x, float y, int amount) {
-                System.out.println("stage SCROLLED");
-                for (Actor act : stage.getRoot().getChildren()) {
-                    if(act instanceof ScrollPane){
-                        act.getListeners().forEach(it -> {if(it instanceof InputListener){
-                            InputListener il = (InputListener) it;
-                            il.scrolled(event,x,y,amount);
-                        }
-                        });
-                    }
-                }
-                return super.scrolled(event, x, y, amount);
-            }
-        });
 
         stage.addListener(new ClickListener() {
             @Override
@@ -126,19 +121,30 @@ public class MainScreen extends BaseScene {
 
     @Override
     public void show() {
+        stage.clear();
+        context.camera.setToOrtho(false);
+        context.uiCamera.setToOrtho(false);
+        Gdx.gl.glClearColor(128/255f, 128/255f, 128/255f, 1);
+        //initScreenBg();
         if (Gdx.input.getInputProcessor() == null) {
             Gdx.input.setInputProcessor(new InputMultiplexer());
         }
         if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
             ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, stage);
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, uiStage);
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, cameraMoveKeyListener);
             System.out.println("added");
         }
     }
 
     @Override
     public void hide() {
+        context.camera.setToOrtho(true);
+        context.uiCamera.setToOrtho(true);
         if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
             ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(stage);
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(uiStage);
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(cameraMoveKeyListener);
             System.out.println("removed");
         }
     }
@@ -147,24 +153,31 @@ public class MainScreen extends BaseScene {
     public void render(float delta) {
         try {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            context.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
             stage.getBatch().setProjectionMatrix(context.camera.combined);
+
             stage.act();
-            infoPanelContainer.getEventsInfoPanel().act(Gdx.graphics.getDeltaTime());
             stage.draw();
+
             context.camera.update();
+
+            cameraMoveKeyListener.processKeyPressed();
+
             mapRender.render();
+
+
+            uiStage.getBatch().setProjectionMatrix(context.uiCamera.combined);
+
+            uiStage.act();
+            uiStage.draw();
+
+            context.uiCamera.update();
+
+
             context.drawPosition();
 
-            for (Actor act : stage.getRoot().getChildren()) {
-                if (act instanceof SelectBox) {
-                    // System.out.println(((SelectBox)act).getX() + " " + ((SelectBox)act).getY());
-                }
-            }
-
             super.render(delta);
-            context.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            // System.out.println((context.camera.position + " " + (float) (screenBg.getX() + screenBg.getWidth() / 2) + ":" + (float) (screenBg.getY() + screenBg.getHeight() / 2)));
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -178,6 +191,7 @@ public class MainScreen extends BaseScene {
     @Override
     public void dispose() {
         stage.dispose();
+        uiStage.dispose();
     }
 
     public Vector2 getImageCentre(Image image) {

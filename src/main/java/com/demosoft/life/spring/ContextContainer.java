@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.demosoft.life.LifeImitationApplication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,10 +19,20 @@ import org.springframework.stereotype.Component;
 public class ContextContainer {
 
     @Autowired
+    @Qualifier("camera")
     public OrthographicCamera camera;
 
     @Autowired
+    @Qualifier("uiCamera")
+    public OrthographicCamera uiCamera;
+
+    @Autowired
+    @Qualifier("viewPort")
     public Viewport viewport;
+
+    @Autowired
+    @Qualifier("uiViewPort")
+    public Viewport uiViewport;
 
     public LifeImitationApplication game;
 
