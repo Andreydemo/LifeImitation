@@ -3,7 +3,9 @@ package com.demosoft.life.scene.main.info;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.demosoft.life.assets.AssetsLoader;
-import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.imitation.entity.*;
+import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.graphic.*;
 import com.demosoft.life.imitation.entity.impl.CellImpl;
 import com.demosoft.life.imitation.entity.impl.MapImpl;
 import com.demosoft.life.imitation.entity.impl.UcfCoder;
@@ -34,7 +36,7 @@ public class CellInfoPanel {
     private ContextContainer context;
 
     @Autowired
-    private Map map;
+    private GraphicMap map;
 
     @PostConstruct
     void init() {
@@ -53,7 +55,11 @@ public class CellInfoPanel {
     }
 
     public void update(int x, int y) {
-        long cellData =((CellImpl) map.getCellAt(x, y)).getValue();
+        GraphicCell cell = map.getCellAt(x, y);
+        long cellData = ((CellImpl) cell).getValue();
+        GraphicLandscape graphicLandscape = cell.getGraphicLandscape();
+        GraphicHuman graphicHuman = cell.getGraphicHuman();
+        GraphicPlant graphicPlant = cell.getGraphicPlant();
         String info = String.format("Raw: %s\n"
                         + "\n Raw value: %s\n\n"
                         + "\n LandscapeType type as string: %s"
@@ -74,19 +80,19 @@ public class CellInfoPanel {
                         + "\n Active flag (PlantType): %s",
                 XFormatter.formatRaw(cellData),
                 cellData,
-                UcfCoder.decodeLandscapeTypeAsString(cellData),
-                UcfCoder.decodeLandscapeType(cellData),
+                graphicLandscape.getMessage(),
+                graphicLandscape.getType().getValue(),
                 x, y,
-                UcfCoder.decodeHumanType(cellData),
-                XFormatter.formatDate(UcfCoder.decodeHumanAge(cellData)),
-                UcfCoder.decodeHumanEnergy(cellData),
-                UcfCoder.decodeHumanSatiety(cellData),
-                XFormatter.formatDate(UcfCoder.decodeHumanPregnancy(cellData)),
-                UcfCoder.decodePlantType(cellData),
-                PlantType.decodeAndGetByValue(cellData).getMessage(),
-                UcfCoder.decodePlantFruits(cellData),
-                UcfCoder.decodeActiveFlagHuman(cellData),
-                UcfCoder.decodeActiveFlagPlant(cellData));
+                graphicHuman.getType().getValue(),
+                XFormatter.formatDate(graphicHuman.getAge()),
+                graphicHuman.getAge(),
+                graphicHuman.getSatiety(),
+                XFormatter.formatDate(graphicHuman.getPregnancy()),
+                graphicPlant.getType().getValue(),
+                graphicPlant.getMessage(),
+                graphicPlant.getFruits(),
+                cell.getActiveFlagHuman(),
+                cell.getActiveFlagPlant());
         baseElement.setText(info);
     }
 

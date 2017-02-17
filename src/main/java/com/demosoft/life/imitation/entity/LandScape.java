@@ -10,4 +10,8 @@ public interface Landscape {
     LandscapeType getType();
 
     void setType(LandscapeType landscapeType);
+
+    int getHeight();
+
+    void setHeight(int height);
 }

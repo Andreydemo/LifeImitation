@@ -18,10 +18,6 @@ public class UcfCoder {
         return decode(uc, LandscapeType.LANDSCAPE_TYPE_MASK, LandscapeType.LANDSCAPE_TYPE_SHIFT);
     }
 
-    public final static String decodeLandscapeTypeAsString(long uc) {
-        return LandscapeType.getByValue( decodeLandscapeType(uc)).getMessage();
-    }
-
     public final static long encodeHumanType(long uc, int u) {
         return encode(uc, u, HumanType.HUMAN_TYPE_MASK, HumanType.HUMAN_TYPE_SHIFT);
     }

@@ -22,6 +22,11 @@ public class GraphicLandscapeImpl implements GraphicLandscape {
     }
 
     @Override
+    public void setHeight(int height) {
+        baseLandscape.setHeight(height);
+    }
+
+    @Override
     public void setType(LandscapeType landscapeType) {
         baseLandscape.setType(landscapeType);
     }
@@ -44,5 +49,10 @@ public class GraphicLandscapeImpl implements GraphicLandscape {
     @Override
     public void setMessage(String message) {
         throw new IllegalArgumentException();
+    }
+
+    @Override
+    public int getHeight() {
+        return baseLandscape.getHeight();
     }
 }

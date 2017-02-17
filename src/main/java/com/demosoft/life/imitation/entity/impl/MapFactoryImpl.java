@@ -127,16 +127,15 @@ public class MapFactoryImpl implements MapFactory {
         return new CellImpl();
     }
 
-    private int tryGenerateWomans(MapImpl mapImpl, int menCount) {
+    private int tryGenerateWomans(Map mapImpl, int menCount) {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
-                CellImpl cellImpl = (CellImpl) cell;
-                LandscapeType landscape = LandscapeType.decodeAndGetByValue(cellImpl.getValue());
-                HumanType human = HumanType.decodeAndGetByValue(cellImpl.getValue());
+                LandscapeType landscape = cell.getLandscape().getType();
+                HumanType human = cell.getHuman().getType();
                 if (!landscape.isRockBlock() && !landscape.isWatterBlock() && human == HumanType.HUMAN_TYPE_EMPTY) {
                     if (XRandom.generateBoolean(1) && menCount > 0) {
                         menCount--;
-                        placeWoman(cellImpl);
+                        placeWoman(cell);
                     }
                 }
             }
@@ -144,27 +143,26 @@ public class MapFactoryImpl implements MapFactory {
         return menCount;
     }
 
-    private void placeWoman(CellImpl cell) {
-        cell.setValue(UcfCoder.encodeHumanType(cell.getValue(), HumanType.HUMAN_TYPE_WOMAN.getValue()));
+    private void placeWoman(Cell cell) {
+        cell.getHuman().setType(HumanType.HUMAN_TYPE_WOMAN);
         initHuman(cell);
     }
 
-    private void initHuman(CellImpl cell) {
-        cell.setValue(UcfCoder.encodeHumanAge(cell.getValue(), 30));
-        cell.setValue(UcfCoder.encodeHumanEnergy(cell.getValue(), 63));
-        cell.setValue(UcfCoder.encodeHumanSatiety(cell.getValue(), 63));
+    private void initHuman(Cell cell) {
+        cell.getHuman().setAge(30 * 300);
+        cell.getHuman().setEnergy(63);
+        cell.getHuman().setSatiety(63);
     }
 
-    private int tryGenerateMens(MapImpl mapImpl, int menCount) {
+    private int tryGenerateMens(Map mapImpl, int menCount) {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
-                CellImpl cellImpl = (CellImpl) cell;
-                LandscapeType landscape = LandscapeType.decodeAndGetByValue(cellImpl.getValue());
-                HumanType human = HumanType.decodeAndGetByValue(cellImpl.getValue());
+                LandscapeType landscape = cell.getLandscape().getType();
+                HumanType human = cell.getHuman().getType();
                 if (!landscape.isRockBlock() && !landscape.isWatterBlock() && human == HumanType.HUMAN_TYPE_EMPTY) {
                     if (XRandom.generateBoolean(1) && menCount > 0) {
                         menCount--;
-                        placeMan(cellImpl);
+                        placeMan(cell);
                     }
                 }
             }
@@ -172,43 +170,40 @@ public class MapFactoryImpl implements MapFactory {
         return menCount;
     }
 
-    private void placeMan(CellImpl cell) {
-        cell.setValue(UcfCoder.encodeHumanType(cell.getValue(), HumanType.HUMAN_TYPE_MAN.getValue()));
+    private void placeMan(Cell cell) {
+        cell.getHuman().setType(HumanType.HUMAN_TYPE_MAN);
         initHuman(cell);
     }
 
-    private void cleanHumans(MapImpl map) {
+    private void cleanHumans(Map map) {
         for (Cell[] cellRow : map.getCells()) {
             for (Cell cell : cellRow) {
-                CellImpl cellImpl = (CellImpl) cell;
-                if (HumanType.decodeAndGetByValue(cellImpl.getValue()) != HumanType.HUMAN_TYPE_EMPTY) {
-                    cellImpl.setValue(UcfCoder.encodeHumanType(cellImpl.getValue(), HumanType.HUMAN_TYPE_EMPTY.getValue()));
+                if (cell.getHuman().getType() != HumanType.HUMAN_TYPE_EMPTY) {
+                    cell.getHuman().setType(HumanType.HUMAN_TYPE_EMPTY);
                 }
             }
         }
     }
 
 
-    private void cleanTrees(MapImpl mapImpl) {
+    private void cleanTrees(Map mapImpl) {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
-                CellImpl cellImpl = (CellImpl) cell;
-                if (PlantType.decodeAndGetByValue(cellImpl.getValue()) != PlantType.PLANT_TYPE_EMPTY) {
-                    cellImpl.setValue(UcfCoder.encodePlantType(cellImpl.getValue(), PlantType.PLANT_TYPE_EMPTY.getValue()));
+                if (cell.getPlant().getType() != PlantType.PLANT_TYPE_EMPTY) {
+                    cell.getPlant().setType(PlantType.PLANT_TYPE_EMPTY);
                 }
             }
         }
     }
 
-    private int tryGeneratePlant(MapImpl mapImpl, int treesToPlace) {
+    private int tryGeneratePlant(Map mapImpl, int treesToPlace) {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
-                CellImpl cellImpl = (CellImpl) cell;
-                LandscapeType landscape = LandscapeType.decodeAndGetByValue(cellImpl.getValue());
+                LandscapeType landscape = cell.getLandscape().getType();
                 if (!landscape.isRockBlock() && !landscape.isWatterBlock()) {
                     if (XRandom.generateBoolean(1) && treesToPlace > 0) {
                         treesToPlace--;
-                        placeTree(cellImpl);
+                        placeTree(cell);
                     }
                 }
             }
@@ -216,36 +211,36 @@ public class MapFactoryImpl implements MapFactory {
         return treesToPlace;
     }
 
-    private void placeTree(CellImpl cell) {
+    private void placeTree(Cell cell) {
         PlantType plant = PlantType.getByValue(XRandom.generateInteger(1, 3));
-        cell.setValue(UcfCoder.encodePlantType(cell.getValue(), plant.getValue()));
-        cell.setValue(UcfCoder.encodePlantFruits(cell.getValue(), 30));
+        cell.getPlant().setType(plant);
+        cell.getPlant().setFruits(30);
     }
 
-    private void diamondStep(MapImpl mapImpl, float landscapeShift, int bigStep, int smallStep) {
-        for (int x = smallStep; x < mapImpl.getSize(); x += bigStep) {
-            for (int y = smallStep; y < mapImpl.getSize(); y += bigStep) {
-                long topLeftValue = ((CellImpl) mapImpl.getCellAt(x - smallStep, y - smallStep)).getValue();
-                long topRightValue = ((CellImpl) mapImpl.getCellAt(x + smallStep, y - smallStep)).getValue();
-                long bottomLeftValue = ((CellImpl) mapImpl.getCellAt(x - smallStep, y + smallStep)).getValue();
-                long bottomRightValue = ((CellImpl) mapImpl.getCellAt(x + smallStep, y + smallStep)).getValue();
+    private void diamondStep(Map map, float landscapeShift, int bigStep, int smallStep) {
+        for (int x = smallStep; x < map.getSize(); x += bigStep) {
+            for (int y = smallStep; y < map.getSize(); y += bigStep) {
+                long topLeftValue = map.getCellAt(x - smallStep, y - smallStep).getLandscape().getHeight();
+                long topRightValue = map.getCellAt(x + smallStep, y - smallStep).getLandscape().getHeight();
+                long bottomLeftValue = map.getCellAt(x - smallStep, y + smallStep).getLandscape().getHeight();
+                long bottomRightValue = map.getCellAt(x + smallStep, y + smallStep).getLandscape().getHeight();
                 float average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4;
                 int centralValue = (int) (average + random.nextInt(3) * landscapeShift - landscapeShift); // -landscapeShift 0 landscapeShift
-                mapImpl.setCell(createCell(getValueInRange(centralValue, 1, LandscapeType.LANDSCAPE_MAX_VALUE), x, y));
+                map.setCell(createCell(getValueInRange(centralValue, 1, LandscapeType.LANDSCAPE_MAX_VALUE), x, y));
             }
         }
     }
 
-    private void squareStep(MapImpl mapImpl, float landscapeShift, int bigStep, int smallStep) {
-        for (int x = 0; x < mapImpl.getSize(); x += smallStep) {
-            for (int y = (x + smallStep) % bigStep; y < mapImpl.getSize(); y += bigStep) {
-                long topValue = ((CellImpl) mapImpl.getCellAt((y - smallStep + mapImpl.getSize() - 1) % (mapImpl.getSize() - 1), x)).getValue();
-                long leftValue = (int) ((CellImpl) mapImpl.getCellAt(y, (x - smallStep + mapImpl.getSize() - 1) % (mapImpl.getSize() - 1))).getValue();
-                long rightValue = (int) ((CellImpl) mapImpl.getCellAt(y, (x + smallStep) % (mapImpl.getSize() - 1))).getValue();
-                long bottomValue = (int) ((CellImpl) mapImpl.getCellAt((y + smallStep) % (mapImpl.getSize() - 1), x)).getValue();
+    private void squareStep(Map map, float landscapeShift, int bigStep, int smallStep) {
+        for (int x = 0; x < map.getSize(); x += smallStep) {
+            for (int y = (x + smallStep) % bigStep; y < map.getSize(); y += bigStep) {
+                long topValue =  map.getCellAt((y - smallStep + map.getSize() - 1) % (map.getSize() - 1), x).getLandscape().getHeight();
+                long leftValue =  map.getCellAt(y, (x - smallStep + map.getSize() - 1) % (map.getSize() - 1)).getLandscape().getHeight();
+                long rightValue =  map.getCellAt(y, (x + smallStep) % (map.getSize() - 1)).getLandscape().getHeight();
+                long bottomValue =  map.getCellAt((y + smallStep) % (map.getSize() - 1), x).getLandscape().getHeight();
                 float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
                 int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1, LandscapeType.LANDSCAPE_MAX_VALUE);
-                mapImpl.setCell(createCell(centerValue, y, x));
+                map.setCell(createCell(centerValue, y, x));
             }
         }
     }

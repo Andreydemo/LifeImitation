@@ -23,4 +23,14 @@ public class LandscapeImpl implements Landscape {
     public void setType(LandscapeType landscapeType) {
         relatedCell.setValue(UcfCoder.encodeLandscapeType(relatedCell.getValue(), XMath.getValueInRange(landscapeType.getValue(), 0, 7)));
     }
+
+    @Override
+    public int getHeight() {
+        return getType().getValue();
+    }
+
+    @Override
+    public void setHeight(int height) {
+        setType(LandscapeType.decodeAndGetByValue(height));
+    }
 }

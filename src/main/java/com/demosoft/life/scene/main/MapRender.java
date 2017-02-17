@@ -4,8 +4,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.demosoft.life.imitation.entity.graphic.GraphicCell;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
 import com.demosoft.life.imitation.entity.impl.MapImpl;
+import com.demosoft.life.imitation.entity.type.HumanType;
+import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +68,6 @@ public class MapRender {
 
         drawBackgroundMap();
         drawForegroundMap();
-       /* drawHumansAndPlants();*/
         drawBorder();
         drawSelected();
     }
@@ -89,7 +91,7 @@ public class MapRender {
 
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
-                Optional<Integer> foregroundColor = CellRenderer.getForegroundColor(map.getCellAt(x, y));
+                Optional<Integer> foregroundColor = getForegroundColor(map.getCellAt(x, y));
                 if (foregroundColor.isPresent()) {
                     shapeRenderer.setColor(new Color(foregroundColor.get()));
                     shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
@@ -99,25 +101,6 @@ public class MapRender {
         }
         shapeRenderer.end();
     }
-
-/*
-    private void drawHumansAndPlants() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        for (int x = 0; x < map.getSize(); x++) {
-            for (int y = 0; y < map.getSize(); y++) {
-                Optional<Integer> foregroundColor = CellRenderer.getForegroundColor(map.getValueAt(x, y).getValue());
-                if (foregroundColor.isPresent()) {
-                    shapeRenderer.setColor(new Color(foregroundColor.get()));
-                    shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
-                }
-
-            }
-        }
-        shapeRenderer.end();
-    }
-*/
-
 
     private void drawBorder() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -161,5 +144,17 @@ public class MapRender {
         return mapPositionY + cellHeight * map.getSize();
     }
 
+    public static Optional<Integer> getForegroundColor(GraphicCell cellData) {
+        Integer color;
+        int plantType = cellData.getPlant().getType().getValue();
+        if (cellData.getHuman().getType() != HumanType.HUMAN_TYPE_EMPTY) {
+            color = cellData.getHuman().getType().getColor();
+        } else if (plantType != PlantType.PLANT_TYPE_EMPTY.getValue()) {
 
+            color = PlantType.getByValue(plantType).getColor();
+        } else {
+            return Optional.empty();
+        }
+        return Optional.of(color);
+    }
 }
