@@ -3,8 +3,6 @@ package com.demosoft.life.logic.force;
 import com.demosoft.life.imitation.entity.*;
 import com.demosoft.life.imitation.entity.impl.CellImpl;
 import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
-import com.demosoft.life.imitation.entity.impl.UcfCoder;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.LandscapeType;
 import com.demosoft.life.imitation.entity.type.PlantType;
@@ -37,14 +35,14 @@ public class Force {
     public void start() {
         if (timer == null) {
             timer = new Timer(timerDelay, e -> {
-                for (int y = 0; y < MapFactoryImpl.MAP_SIZE; y++) {
-                    for (int x = 0; x < MapFactoryImpl.MAP_SIZE; x++) {
+                for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+                    for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
                         map.getCellAt(y, x).setActiveFlagHuman(true);
                         map.getCellAt(y, x).setActiveFlagPlant(true);
                     }
                 }
-                for (int y = 0; y < MapFactoryImpl.MAP_SIZE; y++) {
-                    for (int x = 0; x < MapFactoryImpl.MAP_SIZE; x++) {
+                for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+                    for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
                         act(((CellImpl) map.getCellAt(x, y)).getValue(), y, x);
                     }
                 }
@@ -149,11 +147,11 @@ public class Force {
                     }
                 }
             }
-            int minTarget = MapImpl.MAP_SIZE * MapImpl.MAP_SIZE + MapImpl.MAP_SIZE * MapImpl.MAP_SIZE;
+            int minTarget = MapFactoryImpl.mapSize * MapFactoryImpl.mapSize + MapFactoryImpl.mapSize * MapFactoryImpl.mapSize;
             int yTarget = y;
             int xTarget = x;
-            for (int yTemp = 0; yTemp < MapImpl.MAP_SIZE; yTemp++) {
-                for (int xTemp = 0; xTemp < MapImpl.MAP_SIZE; xTemp++) {
+            for (int yTemp = 0; yTemp < MapFactoryImpl.mapSize; yTemp++) {
+                for (int xTemp = 0; xTemp < MapFactoryImpl.mapSize; xTemp++) {
                     if (map.getCellAt(xTemp, yTemp).getPlant().getFruits() != 0) {
                         int yDelta = Math.abs(yTemp - y);
                         int xDelta = Math.abs(xTemp - x);
@@ -378,7 +376,7 @@ public class Force {
     }
 
     private boolean isCellInMapRange(int y, int x) {
-        return y >= 0 && y < MapImpl.MAP_SIZE && x >= 0 && x < MapImpl.MAP_SIZE;
+        return y >= 0 && y < MapFactoryImpl.mapSize && x >= 0 && x < MapFactoryImpl.mapSize;
     }
 
     private boolean canMove(Cell cell) {

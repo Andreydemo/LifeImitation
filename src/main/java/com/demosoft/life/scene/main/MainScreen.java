@@ -71,13 +71,38 @@ public class MainScreen extends BaseScene {
         controlPanel.addToStage(uiStage);
         infoPanelContainer.addToStage(uiStage);
 
-        stage.addListener(mapRender.clickListener);
 
 
-        stage.setFlipped(true);
+
+        stage.setFlipped(false);
         uiStage.setFlipped(false);
-        //stage.setDebugAll(true);
 
+
+    }
+
+    @Override
+    public void show() {
+        initStage();
+
+        context.camera.setToOrtho(false);
+        context.uiCamera.setToOrtho(false);
+        Gdx.gl.glClearColor(128/255f, 128/255f, 128/255f, 1);
+        //initScreenBg();
+        if (Gdx.input.getInputProcessor() == null) {
+            Gdx.input.setInputProcessor(new InputMultiplexer());
+        }
+        if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, uiStage);
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(1, stage);
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(2, cameraMoveKeyListener);
+            System.out.println("added");
+        }
+    }
+
+    private void initStage() {
+        stage.clear();
+
+        stage.addListener(mapRender.clickListener);
         stage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -94,47 +119,6 @@ public class MainScreen extends BaseScene {
                 super.clicked(event, x, y);
             }
         });
-    }
-
-    private void initScreenBg() {
-        screenBg = new Image(atlas.findRegion("white-screen-bg"));
-        screenBg.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        foolowToCamera(screenBg);
-        stage.addActor(screenBg);
-    }
-
-
-    private void initSelectBox() {
-        SelectBox<String> selectBox = new SelectBox<>(skin);
-        selectBox.setItems(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"});
-        selectBox.setSelectedIndex(0);
-        selectBox.setDebug(true);
-        selectBox.setBounds(debugPosition.x, debugPosition.y, 200, 50);
-        selectBox.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("->" + event + "x: " + x + " y: " + y);
-                super.clicked(event, x, y);
-            }
-        });
-    }
-
-    @Override
-    public void show() {
-        stage.clear();
-        context.camera.setToOrtho(false);
-        context.uiCamera.setToOrtho(false);
-        Gdx.gl.glClearColor(128/255f, 128/255f, 128/255f, 1);
-        //initScreenBg();
-        if (Gdx.input.getInputProcessor() == null) {
-            Gdx.input.setInputProcessor(new InputMultiplexer());
-        }
-        if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, stage);
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, uiStage);
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, cameraMoveKeyListener);
-            System.out.println("added");
-        }
     }
 
     @Override

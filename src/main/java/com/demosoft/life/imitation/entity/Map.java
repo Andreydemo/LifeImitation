@@ -14,4 +14,6 @@ public interface Map {
     Cell getCellAt(int x, int y);
 
     void setCell(CellImpl cell);
+
+    void reCreate(int size);
 }

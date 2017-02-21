@@ -58,11 +58,16 @@ public class ContextContainer {
         if (Gdx.input.isTouched()) {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
-            font.draw(batch, "x: " + Gdx.input.getX() + " y: " + Gdx.input.getY(), Gdx.input.getX(), translateY(Gdx.input.getY()));
-            font.draw(batch, "unproject x: " + Gdx.input.getX() + " y: " + translateY(Gdx.input.getY()), Gdx.input.getX(),
+            font.draw(batch, "x: " + Gdx.input.getX() + " y: " + Gdx.input.getY(), translateX(Gdx.input.getX()), translateY(Gdx.input.getY()));
+            font.draw(batch, "unproject x: " + translateX(Gdx.input.getX()) + " y: " + translateY(Gdx.input.getY()), Gdx.input.getX(),
                     translateY(Gdx.input.getY()) + 20);
             batch.end();
         }
 
+    }
+
+    public float translateX(int x) {
+        Vector3 v = new Vector3(x, 0, 0);
+        return camera.unproject(v).x;
     }
 }

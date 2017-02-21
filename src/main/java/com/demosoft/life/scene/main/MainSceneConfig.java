@@ -1,12 +1,9 @@
 package com.demosoft.life.scene.main;
 
-import com.demosoft.life.imitation.entity.MapFactory;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
 import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
 import com.demosoft.life.imitation.entity.graphic.impl.GraphicMapFactoryImpl;
-import com.demosoft.life.imitation.entity.graphic.impl.GraphicMapImpl;
 import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
 import com.demosoft.life.infra.MapLoader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +31,7 @@ public class MainSceneConfig {
 
     @Bean
     GraphicMap map() {
-        GraphicMap map = graphicMapFactory().generateRandomMap(MapFactoryImpl.MAP_SIZE);
+        GraphicMap map = graphicMapFactory().generateRandomMap(MapFactoryImpl.mapSize);
         return map;
     }
 

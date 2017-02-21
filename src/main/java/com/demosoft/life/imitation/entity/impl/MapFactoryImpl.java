@@ -13,7 +13,8 @@ import java.util.Random;
  */
 public class MapFactoryImpl implements MapFactory {
 
-    public final static int MAP_SIZE = 65;
+    public static int mapSize = 65;
+    public static int map_size_base = 6;
     private Random random = new Random();
 
     @Override
@@ -73,6 +74,27 @@ public class MapFactoryImpl implements MapFactory {
             }
         }
         System.out.println("MapFactoryImpl map end generatePlants");
+    }
+
+    @Override
+    public void incMapSize() {
+        changesMapSize(1);
+    }
+
+    @Override
+    public void decMapSize() {
+        changesMapSize(-1);
+    }
+
+    @Override
+    public void changesMapSize(int step) {
+        map_size_base += step;
+        mapSize = (int) (Math.pow(2, map_size_base) + 1);
+    }
+
+    @Override
+    public int getMapSize() {
+        return mapSize;
     }
 
     @Override
@@ -234,10 +256,10 @@ public class MapFactoryImpl implements MapFactory {
     private void squareStep(Map map, float landscapeShift, int bigStep, int smallStep) {
         for (int x = 0; x < map.getSize(); x += smallStep) {
             for (int y = (x + smallStep) % bigStep; y < map.getSize(); y += bigStep) {
-                long topValue =  map.getCellAt((y - smallStep + map.getSize() - 1) % (map.getSize() - 1), x).getLandscape().getHeight();
-                long leftValue =  map.getCellAt(y, (x - smallStep + map.getSize() - 1) % (map.getSize() - 1)).getLandscape().getHeight();
-                long rightValue =  map.getCellAt(y, (x + smallStep) % (map.getSize() - 1)).getLandscape().getHeight();
-                long bottomValue =  map.getCellAt((y + smallStep) % (map.getSize() - 1), x).getLandscape().getHeight();
+                long topValue = map.getCellAt((y - smallStep + map.getSize() - 1) % (map.getSize() - 1), x).getLandscape().getHeight();
+                long leftValue = map.getCellAt(y, (x - smallStep + map.getSize() - 1) % (map.getSize() - 1)).getLandscape().getHeight();
+                long rightValue = map.getCellAt(y, (x + smallStep) % (map.getSize() - 1)).getLandscape().getHeight();
+                long bottomValue = map.getCellAt((y + smallStep) % (map.getSize() - 1), x).getLandscape().getHeight();
                 float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
                 int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1, LandscapeType.LANDSCAPE_MAX_VALUE);
                 map.setCell(createCell(centerValue, y, x));

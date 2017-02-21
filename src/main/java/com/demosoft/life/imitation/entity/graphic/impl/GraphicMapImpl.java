@@ -38,6 +38,11 @@ public class GraphicMapImpl extends MapImpl implements GraphicMap {
     }
 
     @Override
+    public void reCreate(int size) {
+        map.reCreate(size);
+    }
+
+    @Override
     public void setCell(CellImpl cell) {
         map.setCell(cell);
     }

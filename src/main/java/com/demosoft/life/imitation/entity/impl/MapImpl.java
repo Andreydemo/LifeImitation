@@ -3,20 +3,12 @@ package com.demosoft.life.imitation.entity.impl;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.MapFactory;
-import com.demosoft.life.imitation.entity.type.HumanType;
-import com.demosoft.life.imitation.entity.type.LandscapeType;
-import com.demosoft.life.imitation.entity.type.PlantType;
-import com.demosoft.life.logic.random.XRandom;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Random;
 
 /**
  * Created by Andrii_Korkoshko on 1/24/2017.
  */
 public class MapImpl implements Map {
 
-    public final static int MAP_SIZE = 65;
     public final static int CELL_SIZE = 10;
     public static final int TREES_TO_PLACE = 20;
 
@@ -29,7 +21,7 @@ public class MapImpl implements Map {
 
 
     public MapImpl(MapFactory mapFactory) {
-        this.size = MAP_SIZE;
+        this.size = MapFactoryImpl.mapSize;
         cells = new Cell[size][size];
         this.mapFactory = (MapFactoryImpl) mapFactory;
         fill();
@@ -46,6 +38,13 @@ public class MapImpl implements Map {
 
     public void setCell(CellImpl cell) {
         cells[cell.getX()][cell.getY()] = cell;
+    }
+
+    @Override
+    public void reCreate(int size   ) {
+        this.size = size;
+        cells = new Cell[size][size];
+        fill();
     }
 
     public int getSize() {

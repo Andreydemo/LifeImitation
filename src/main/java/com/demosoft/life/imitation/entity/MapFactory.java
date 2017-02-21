@@ -22,4 +22,13 @@ public interface MapFactory {
     void generatePeoples(Map map, int menCount, int womanCount);
 
     void generatePlants(Map map, int count);
+
+    void incMapSize();
+
+    void decMapSize();
+
+    void changesMapSize(int step);
+
+    int getMapSize();
+
 }

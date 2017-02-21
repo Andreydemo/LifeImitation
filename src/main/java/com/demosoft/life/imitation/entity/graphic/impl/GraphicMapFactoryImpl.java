@@ -63,6 +63,11 @@ public class GraphicMapFactoryImpl extends MapFactoryImpl implements GraphicMapF
     }
 
     @Override
+    public int getMapSize() {
+        return mapSize;
+    }
+
+    @Override
     public GraphicMap generateRandomMap(int size) {
         System.out.println("GraphicMapFactoryImpl map start generateRandomMap");
         GraphicMapImpl graphicMap = new GraphicMapImpl(this, (MapImpl) super.generateRandomMap(size));

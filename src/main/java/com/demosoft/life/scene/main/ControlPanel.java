@@ -44,6 +44,11 @@ public class ControlPanel {
     private TextField humansWomanCount;
     private Label humansWomanCount_Label;
 
+    private TextField mapSize;
+    private Label mapSize_Label;
+    private TextButton incMapSize;
+    private TextButton decMapSize;
+
     @Autowired
     private AssetsLoader assetsLoader;
 
@@ -74,6 +79,34 @@ public class ControlPanel {
         initGenerateButton(skin);
         initGeneratePlantsButton(skin);
         initGenerateHumansButton(skin);
+        initMapSizeEditor(skin);
+    }
+
+    private void initMapSizeEditor(Skin skin) {
+        mapSize = new TextField(String.valueOf(graphicMapFactory.getMapSize()), skin);
+        mapSize.setBounds(1100, context.translateY(Gdx.graphics.getHeight() - 50), 50, 25);
+
+        incMapSize = new TextButton("->", skin);
+        incMapSize.setBounds(1250, context.translateY(Gdx.graphics.getHeight() - 50), 25, 25);
+        incMapSize.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                graphicMapFactory.incMapSize();
+                mapSize.setText(String.valueOf(graphicMapFactory.getMapSize()));
+            }
+        });
+
+        decMapSize = new TextButton("<-", skin);
+        decMapSize.setBounds(1050, context.translateY(Gdx.graphics.getHeight() - 50), 25, 25);
+        decMapSize.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                graphicMapFactory.decMapSize();
+                mapSize.setText(String.valueOf(graphicMapFactory.getMapSize()));
+            }
+        });
     }
 
     private void initGenerateButton(Skin skin) {
@@ -83,6 +116,8 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                int mapSize = graphicMapFactory.getMapSize();
+                map.reCreate(mapSize);
                 graphicMapFactory.generateLandscape(map);
             }
         });
@@ -207,5 +242,9 @@ public class ControlPanel {
         stage.addActor(humansWomanCount_Label);
         stage.addActor(humansMenCount);
         stage.addActor(humansMenCount_Label);
+
+        stage.addActor(incMapSize);
+        stage.addActor(decMapSize);
+        stage.addActor(mapSize);
     }
 }

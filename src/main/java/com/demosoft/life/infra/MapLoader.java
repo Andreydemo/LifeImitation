@@ -1,12 +1,8 @@
 package com.demosoft.life.infra;
 
 import com.demosoft.life.imitation.entity.Cell;
-import com.demosoft.life.imitation.entity.impl.CellImpl;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
-import static com.demosoft.life.imitation.entity.impl.MapImpl.MAP_SIZE;
+import static com.demosoft.life.imitation.entity.impl.MapFactoryImpl.mapSize;
 
 /**
  * Created by Andrii_Korkoshko on 2/13/2017.
@@ -17,8 +13,8 @@ public class MapLoader {
     public static final String MAP_PATH = "/data/test-data.dat";
 
     public Cell[][] load() {
-        long[][] data = new long[MAP_SIZE][MAP_SIZE];
-        Cell[][] cells = new Cell[MAP_SIZE][MAP_SIZE];
+        long[][] data = new long[mapSize][mapSize];
+        Cell[][] cells = new Cell[mapSize][mapSize];
        /* ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream((getClass().getResourceAsStream(MAP_PATH)));
@@ -34,8 +30,8 @@ public class MapLoader {
                 }
             }
         }
-        for (int x = 0; x < MAP_SIZE; x++) {
-            for (int y = 0; y < MAP_SIZE; y++) {
+        for (int x = 0; x < mapSize; x++) {
+            for (int y = 0; y < mapSize; y++) {
                 cells[x][y] = new CellImpl(data[x][y], x, y);
             }
         }*/

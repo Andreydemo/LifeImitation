@@ -3,7 +3,7 @@ package com.demosoft.life.logic.statistic;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
+import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.PlantType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +70,8 @@ public class Statistic {
         int peopleAgeTemp = 0;
         int plantsTemp = 0;
         int plantsFruitsTemp = 0;
-        for (int y = 0; y < MapImpl.MAP_SIZE; y++) {
-            for (int x = 0; x < MapImpl.MAP_SIZE; x++) {
+        for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+            for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
                 Cell cell = map.getCellAt(x,y);
                 Human human = cell.getHuman();
                 if (human.getType() != HumanType.HUMAN_TYPE_EMPTY) {
