@@ -39,8 +39,12 @@ public enum HumanType {
     }
 
     public static HumanType getByValue(int value) {
-        List<HumanType> collect = Arrays.stream(HumanType.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
-        return collect.size() > 0 ? collect.get(0) : HUMAN_TYPE_EMPTY;
+        for (HumanType humanType : HumanType.values()) {
+            if (humanType.getValue() == value) {
+                return humanType;
+            }
+        }
+        return HUMAN_TYPE_EMPTY;
     }
 
     public static HumanType decodeAndGetByValue(long value) {

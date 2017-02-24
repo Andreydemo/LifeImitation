@@ -1,5 +1,6 @@
 package com.demosoft.life.imitation.entity.graphic;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.demosoft.life.imitation.entity.Map;
 
 /**
@@ -16,4 +17,10 @@ public interface GraphicMap extends Map {
     void setSelectedY(int selectedY);
 
     GraphicCell getCellAt(int x, int y);
+
+    Texture getMiniMap();
+
+    void setMiniMap(Texture miniMap);
+
+    void generateMiniMap();
 }

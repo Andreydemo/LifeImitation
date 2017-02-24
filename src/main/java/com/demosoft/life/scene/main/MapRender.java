@@ -2,11 +2,11 @@ package com.demosoft.life.scene.main;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.imitation.entity.graphic.GraphicCell;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
@@ -25,6 +25,9 @@ public class MapRender {
     private float mapPositionX;
     private float mapPositionY;
 
+    private int focusedX;
+    private int focusedY;
+
     private final GraphicMap map;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -37,6 +40,9 @@ public class MapRender {
     @Autowired
     private InfoPanelContainer infoPanelContainer;
 
+    private int bufRadius = 30;
+    private int baseBufRadius = 30;
+
     public MapRender(float mapPositionX, float mapPositionY, GraphicMap map, int cellWidth, int cellHeight) {
         this.mapPositionY = mapPositionY;
         this.mapPositionX = mapPositionX;
@@ -48,17 +54,35 @@ public class MapRender {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 y = contextContainer.translateY(y);
-                if (x >= mapPositionX && y >= mapPositionY
-                        && x <= getMapEndPositionX() && y <= getMapEndPositionY()) {
-                    int selectedX = (int) ((x - mapPositionX) / cellWidth);
-                    int selectedY = (int) ((y - mapPositionY) / cellHeight);
-                    map.setSelectedX(selectedX);
-                    map.setSelectedY(selectedY);
-                    infoPanelContainer.getCellInfoPanel().update(selectedX, selectedY);
-                    System.out.println("Selected x: " + selectedX + " | Selected y: " + selectedY);
+                Optional<Vector2> selectedCellPosition = getCellByPosition(x, y);
+                if (selectedCellPosition.isPresent()) {
+                    map.setSelectedX((int) selectedCellPosition.get().x);
+                    map.setSelectedY((int) selectedCellPosition.get().y);
+                    infoPanelContainer.getCellInfoPanel().update((int) selectedCellPosition.get().x, (int) selectedCellPosition.get().y);
                 }
             }
         };
+    }
+
+    public Optional<Vector2> getCellByPosition(float x, float y) {
+        if (x >= mapPositionX && y >= mapPositionY
+                && x <= getMapEndPositionX() && y <= getMapEndPositionY()) {
+            int selectedX = (int) ((x - mapPositionX) / cellWidth);
+            int selectedY = (int) ((y - mapPositionY) / cellHeight);
+            Vector2 result = new Vector2(selectedX, selectedY);
+
+            return Optional.of(result);
+        }
+        return Optional.empty();
+    }
+
+    public void calculateFocusedPosition() {
+        Optional<Vector2> cellByPosition = getCellByPosition(contextContainer.getCamera().position.x, contextContainer.translateY(contextContainer.getCamera().position.y));
+        if (cellByPosition.isPresent()) {
+            focusedX = (int) cellByPosition.get().x;
+            focusedY = (int) cellByPosition.get().y;
+        }
+
     }
 
     public void render() {
@@ -70,6 +94,7 @@ public class MapRender {
         drawForegroundMap();
         drawBorder();
         drawSelected();
+        drawFocused();
     }
 
     private void drawBackgroundMap() {
@@ -77,9 +102,11 @@ public class MapRender {
 
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
-                shapeRenderer.setColor(new Color(map.getCellAt(x, y).getGraphicLandscape().getColor()));
-                shapeRenderer.rect(getWorldX(x * cellWidth), contextContainer.translateY(getWorldY(y * cellHeight)), cellWidth, cellHeight);
+                if (inRenderingZone(x, y)) {
+                    shapeRenderer.setColor(new Color(map.getCellAt(x, y).getGraphicLandscape().getColor()));
+                    shapeRenderer.rect(getWorldX(x * cellWidth), contextContainer.translateY(getWorldY(y * cellHeight)), cellWidth, cellHeight);
 
+                }
 
             }
         }
@@ -91,10 +118,12 @@ public class MapRender {
 
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
-                Optional<Integer> foregroundColor = getForegroundColor(map.getCellAt(x, y));
-                if (foregroundColor.isPresent()) {
-                    shapeRenderer.setColor(new Color(foregroundColor.get()));
-                    shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
+                if (inRenderingZone(x, y)) {
+                    Optional<Integer> foregroundColor = getForegroundColor(map.getCellAt(x, y));
+                    if (foregroundColor.isPresent()) {
+                        shapeRenderer.setColor(new Color(foregroundColor.get()));
+                        shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3, cellWidth - 5, cellHeight - 5);
+                    }
                 }
 
             }
@@ -108,13 +137,18 @@ public class MapRender {
 
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
-
-                shapeRenderer.rect(getWorldX(x * cellWidth), contextContainer.translateY(getWorldY(y * cellHeight)), cellWidth, cellHeight);
-
+                if (inRenderingZone(x, y)) {
+                    shapeRenderer.rect(getWorldX(x * cellWidth), contextContainer.translateY(getWorldY(y * cellHeight)), cellWidth, cellHeight);
+                }
 
             }
         }
         shapeRenderer.end();
+    }
+
+    public boolean inRenderingZone(int x, int y) {
+        return x >= (focusedX - bufRadius) && x <= (focusedX + bufRadius) &&
+                y >= (focusedY - bufRadius) && y <= (focusedY + bufRadius);
     }
 
     private void drawSelected() {
@@ -123,6 +157,17 @@ public class MapRender {
 
 
         shapeRenderer.rect(getWorldX(map.getSelectedX() * cellWidth), contextContainer.translateY(getWorldY(map.getSelectedY() * cellHeight)), cellWidth, cellHeight);
+
+
+        shapeRenderer.end();
+    }
+
+    private void drawFocused() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.LIME);
+
+
+        shapeRenderer.rect(getWorldX(focusedX * cellWidth), contextContainer.translateY(getWorldY(focusedY * cellHeight)), cellWidth, cellHeight);
 
 
         shapeRenderer.end();
@@ -156,5 +201,37 @@ public class MapRender {
             return Optional.empty();
         }
         return Optional.of(color);
+    }
+
+    public int getBufRadius() {
+        return bufRadius;
+    }
+
+    public void setBufRadius(int bufRadius) {
+        this.bufRadius = bufRadius;
+    }
+
+    public int getFocusedX() {
+        return focusedX;
+    }
+
+    public void setFocusedX(int focusedX) {
+        this.focusedX = focusedX;
+    }
+
+    public int getFocusedY() {
+        return focusedY;
+    }
+
+    public void setFocusedY(int focusedY) {
+        this.focusedY = focusedY;
+    }
+
+    public int getBaseBufRadius() {
+        return baseBufRadius;
+    }
+
+    public void setBaseBufRadius(int baseBufRadius) {
+        this.baseBufRadius = baseBufRadius;
     }
 }

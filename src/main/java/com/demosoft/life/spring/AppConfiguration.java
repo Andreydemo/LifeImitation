@@ -39,6 +39,7 @@ public class AppConfiguration {
         return orthographicCamera;
     }
 
+
     @Bean
     @Qualifier("uiCamera")
     OrthographicCamera uiCamera() {
@@ -62,13 +63,13 @@ public class AppConfiguration {
     @Bean
     @Qualifier("flippedStage")
     FlippedStage flippedStage() {
-        return new FlippedStage(viewPort());
+        return new FlippedStage(viewPort(), "flippedStage");
     }
 
     @Bean
     @Qualifier("flippedUiStage")
     FlippedStage flippedUiStage() {
-        return new FlippedStage(uiViewPort());
+        return new FlippedStage(uiViewPort(), "flippedUiStage");
     }
 
     @Bean

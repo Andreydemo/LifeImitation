@@ -38,8 +38,12 @@ public enum PlantType {
     }
 
     public static PlantType getByValue(int value) {
-        List<PlantType> collect = Arrays.stream(PlantType.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
-        return collect.size() > 0 ? collect.get(0) : PLANT_TYPE_EMPTY;
+        for (PlantType plantType : PlantType.values()) {
+            if (plantType.getValue() == value) {
+                return plantType;
+            }
+        }
+        return PLANT_TYPE_EMPTY;
     }
 
     public static PlantType decodeAndGetByValue(long value) {

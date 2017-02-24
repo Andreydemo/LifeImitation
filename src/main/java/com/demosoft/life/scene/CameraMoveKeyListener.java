@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.demosoft.life.scene.main.StageManager;
+import com.demosoft.life.scene.main.minimap.MiniMapPanel;
+import com.demosoft.life.scene.main.info.DebugInfoPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -14,13 +17,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class CameraMoveKeyListener implements InputProcessor {
 
-    private boolean isPlayerMoved = false;
+
     @Autowired
     @Qualifier("camera")
     private OrthographicCamera camera;
 
     @Autowired
     private CameraManager cameraManager;
+
+    @Autowired
+    private DebugInfoPanel debugInfoPanel;
+
+    @Autowired
+    private MiniMapPanel miniMapPanel;
+
+    @Autowired
+    private StageManager stageManager;
 
     public static final int NUM_KEYBOARD_KEYS = 155; // Input.Keys in libGDX has 155 keys.
 
@@ -50,6 +62,7 @@ public class CameraMoveKeyListener implements InputProcessor {
     }
 
     public void processKeyPressed() {
+        debugInfoPanel.update();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             cameraManager.moveTop();
         }
@@ -62,6 +75,10 @@ public class CameraMoveKeyListener implements InputProcessor {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             cameraManager.moveRight();
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            stageManager.unfocusAll();
+        }
+
 
     }
 
@@ -74,6 +91,9 @@ public class CameraMoveKeyListener implements InputProcessor {
                 break;
             case Input.Keys.MINUS:
                 cameraManager.decZoom();
+                break;
+            case Input.Keys.M:
+                miniMapPanel.toggle();
                 break;
             default:
                 break;

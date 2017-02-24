@@ -64,8 +64,12 @@ public enum LandscapeType {
     }
 
     public static LandscapeType getByValue(int value) {
-        List<LandscapeType> collect = Arrays.stream(LandscapeType.values()).filter(it -> it.getValue() == value).collect(Collectors.toList());
-        return collect.size() > 0 ? collect.get(0) : LANDSCAPE_TYPE_EMPTY;
+        for (LandscapeType landscapeType : LandscapeType.values()) {
+            if (landscapeType.getValue() == value) {
+                return landscapeType;
+            }
+        }
+        return LANDSCAPE_TYPE_EMPTY;
     }
 
     public static LandscapeType decodeAndGetByValue(long value) {

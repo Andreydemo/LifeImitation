@@ -1,5 +1,7 @@
 package com.demosoft.life.imitation.entity.graphic.impl;
 
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.MapFactory;
@@ -16,6 +18,8 @@ public class GraphicMapImpl extends MapImpl implements GraphicMap {
 
     private int selectedY;
     private int selectedX;
+
+    private Texture miniMap;
 
     public GraphicMapImpl(MapFactory mapFactory, MapImpl map) {
         super(mapFactory);
@@ -61,5 +65,24 @@ public class GraphicMapImpl extends MapImpl implements GraphicMap {
 
     public void setSelectedY(int selectedY) {
         this.selectedY = selectedY;
+    }
+
+    public Texture getMiniMap() {
+        return miniMap;
+    }
+
+    public void setMiniMap(Texture miniMap) {
+        this.miniMap = miniMap;
+    }
+
+    @Override
+    public void generateMiniMap() {
+        Pixmap pixmap = new Pixmap(map.getSize(), map.getSize(), Pixmap.Format.RGBA8888);
+        for (int x = 0; x < map.getSize(); x++) {
+            for (int y = 0; y < map.getSize(); y++) {
+                pixmap.drawPixel(x, y, getCellAt(x, y).getGraphicLandscape().getColor());
+            }
+        }
+        miniMap = new Texture(pixmap);
     }
 }

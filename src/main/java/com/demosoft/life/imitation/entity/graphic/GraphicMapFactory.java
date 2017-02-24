@@ -11,4 +11,5 @@ public interface GraphicMapFactory extends MapFactory {
 
     @Override
     GraphicMap generateRandomMap(int size);
+
 }

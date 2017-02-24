@@ -16,15 +16,22 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class FlippedStage extends Stage {
 
     private boolean flipped = false;
+    private String name;
 
     public FlippedStage(Viewport viewport) {
         super(viewport);
+    }
+
+    public FlippedStage(Viewport viewport, String name) {
+        super(viewport);
+        this.name = name;
     }
 
     public FlippedStage(Viewport viewport, boolean flipped) {
         super(viewport);
         this.flipped = flipped;
     }
+
 
     public FlippedStage() {
     }
@@ -70,13 +77,13 @@ public class FlippedStage extends Stage {
     public void draw() {
         Camera camera = this.getViewport().getCamera();
         camera.update();
-        if(this.getRoot().isVisible()) {
+        if (this.getRoot().isVisible()) {
             Batch batch = this.getBatch();
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             try {
                 this.getRoot().draw(batch, 1.0F);
-            }catch (Throwable e){
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
             batch.end();
@@ -85,6 +92,15 @@ public class FlippedStage extends Stage {
             }*/
 
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("FlippedStage{");
+        sb.append("flipped=").append(flipped);
+        sb.append(", name='").append(name).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }
 

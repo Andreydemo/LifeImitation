@@ -56,6 +56,9 @@ public class MainScreen extends BaseScene {
     private ContextContainer context;
 
     @Autowired
+    private StageManager stageManager;
+
+    @Autowired
     private AssetsLoader assetsLoader;
 
     @Autowired
@@ -72,8 +75,6 @@ public class MainScreen extends BaseScene {
         infoPanelContainer.addToStage(uiStage);
 
 
-
-
         stage.setFlipped(false);
         uiStage.setFlipped(false);
 
@@ -83,19 +84,15 @@ public class MainScreen extends BaseScene {
     @Override
     public void show() {
         initStage();
-
-        context.camera.setToOrtho(false);
-        context.uiCamera.setToOrtho(false);
-        Gdx.gl.glClearColor(128/255f, 128/255f, 128/255f, 1);
+        mapRender.calculateFocusedPosition();
+        Gdx.gl.glClearColor(128 / 255f, 128 / 255f, 128 / 255f, 1);
         //initScreenBg();
         if (Gdx.input.getInputProcessor() == null) {
             Gdx.input.setInputProcessor(new InputMultiplexer());
         }
+        stageManager.show();
         if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(0, uiStage);
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(1, stage);
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(2, cameraMoveKeyListener);
-            System.out.println("added");
+            ((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(cameraMoveKeyListener);
         }
     }
 
@@ -123,13 +120,9 @@ public class MainScreen extends BaseScene {
 
     @Override
     public void hide() {
-        context.camera.setToOrtho(true);
-        context.uiCamera.setToOrtho(true);
+        stageManager.hide();
         if (Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(stage);
-            ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(uiStage);
             ((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(cameraMoveKeyListener);
-            System.out.println("removed");
         }
     }
 
@@ -138,24 +131,11 @@ public class MainScreen extends BaseScene {
         try {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-            stage.getBatch().setProjectionMatrix(context.camera.combined);
-
-            stage.act();
-            stage.draw();
-
-            context.camera.update();
-
             cameraMoveKeyListener.processKeyPressed();
 
             mapRender.render();
+            stageManager.render();
 
-
-            uiStage.getBatch().setProjectionMatrix(context.uiCamera.combined);
-
-            uiStage.act();
-            uiStage.draw();
-
-            context.uiCamera.update();
 
 
             context.drawPosition();

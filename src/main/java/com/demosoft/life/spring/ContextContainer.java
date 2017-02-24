@@ -56,11 +56,10 @@ public class ContextContainer {
 
     public void drawPosition() {
         if (Gdx.input.isTouched()) {
-            batch.setProjectionMatrix(camera.combined);
+            batch.setProjectionMatrix(uiCamera.combined);
             batch.begin();
-            font.draw(batch, "x: " + Gdx.input.getX() + " y: " + Gdx.input.getY(), translateX(Gdx.input.getX()), translateY(Gdx.input.getY()));
-            font.draw(batch, "unproject x: " + translateX(Gdx.input.getX()) + " y: " + translateY(Gdx.input.getY()), Gdx.input.getX(),
-                    translateY(Gdx.input.getY()) + 20);
+            font.draw(batch, "screen x: " + Gdx.input.getX() + " y: " + Gdx.input.getY(), Gdx.input.getX(), translateY(Gdx.input.getY()));
+            font.draw(batch, "world x: " + translateX(Gdx.input.getX()) + " y: " + unprojectY(Gdx.input.getY()), Gdx.input.getX(), translateY(Gdx.input.getY()) + 20);
             batch.end();
         }
 
@@ -69,5 +68,34 @@ public class ContextContainer {
     public float translateX(int x) {
         Vector3 v = new Vector3(x, 0, 0);
         return camera.unproject(v).x;
+    }
+
+    public float unprojectY(float y) {
+        Vector3 v = new Vector3(0, y, 0);
+        return camera.unproject(v).y;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+
+    public Viewport getViewport() {
+        return viewport;
+    }
+
+    public OrthographicCamera getUiCamera() {
+        return uiCamera;
+    }
+
+    public Viewport getUiViewport() {
+        return uiViewport;
+    }
+
+    public LifeImitationApplication getGame() {
+        return game;
+    }
+
+    public BitmapFont getFont() {
+        return font;
     }
 }

@@ -15,11 +15,15 @@ public class InfoPanelContainer {
     private EventsInfoPanel eventsInfoPanel;
     @Autowired
     private MapInfoPanel mapInfoPanel;
+    @Autowired
+    private DebugInfoPanel debugInfoPanel;
+
 
     public void addToStage(Stage stage) {
         cellInfoPanel.addToStage(stage);
         eventsInfoPanel.addToStage(stage);
         mapInfoPanel.addToStage(stage);
+        debugInfoPanel.addToStage(stage);
     }
 
     public CellInfoPanel getCellInfoPanel() {
@@ -32,5 +36,9 @@ public class InfoPanelContainer {
 
     public MapInfoPanel getMapInfoPanel() {
         return mapInfoPanel;
+    }
+
+    public DebugInfoPanel getDebugInfoPanel() {
+        return debugInfoPanel;
     }
 }

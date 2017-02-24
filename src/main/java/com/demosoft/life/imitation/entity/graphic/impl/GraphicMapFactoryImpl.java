@@ -1,5 +1,6 @@
 package com.demosoft.life.imitation.entity.graphic.impl;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.demosoft.life.imitation.entity.*;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
 import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
@@ -11,7 +12,6 @@ import com.demosoft.life.imitation.entity.impl.MapImpl;
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
 public class GraphicMapFactoryImpl extends MapFactoryImpl implements GraphicMapFactory {
-
 
     @Override
     public GraphicMap createMap(int size) {
@@ -25,8 +25,10 @@ public class GraphicMapFactoryImpl extends MapFactoryImpl implements GraphicMapF
     public void generateLandscape(Map map) {
         System.out.println("GraphicMapFactoryImpl map start generateLandscape");
         super.generateLandscape(map);
+        ((GraphicMap) map).generateMiniMap();
         System.out.println("GraphicMapFactoryImpl map end generateLandscape");
     }
+
 
     @Override
     public Cell createCell() {
@@ -70,8 +72,9 @@ public class GraphicMapFactoryImpl extends MapFactoryImpl implements GraphicMapF
     @Override
     public GraphicMap generateRandomMap(int size) {
         System.out.println("GraphicMapFactoryImpl map start generateRandomMap");
-        GraphicMapImpl graphicMap = new GraphicMapImpl(this, (MapImpl) super.generateRandomMap(size));
+        GraphicMapImpl graphicMap = (GraphicMapImpl) super.generateRandomMap(size);
         System.out.println("GraphicMapFactoryImpl map end generateRandomMap");
         return graphicMap;
     }
+
 }
