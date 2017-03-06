@@ -29,11 +29,23 @@ public class MapImpl implements Map {
     }
 
     private void fill() {
+        int precent = 0;
         for (int i = 0; i < cells.length; i++) {
+            int newPrecent = getPrecent(i);
+            if (newPrecent != precent) {
+                System.out.print("Fill: " + newPrecent + "% ");
+                precent = newPrecent;
+            }
             for (int j = 0; j < cells[0].length; j++) {
                 cells[i][j] = mapFactory.createCell(0, i, j);
             }
         }
+    }
+
+    private int getPrecent(double i) {
+        double v = i / cells.length;
+        v *= 100;
+        return (int) v;
     }
 
     public void setCell(CellImpl cell) {
@@ -41,10 +53,16 @@ public class MapImpl implements Map {
     }
 
     @Override
-    public void reCreate(int size   ) {
+    public void reCreate(int size) {
         this.size = size;
+        long time = System.currentTimeMillis();
+        System.out.println("reCreate map init start");
         cells = new Cell[size][size];
+        System.out.println("reCreate map init end" + (System.currentTimeMillis() - time));
+        time = System.currentTimeMillis();
+        System.out.println("reCreate map fill start");
         fill();
+        System.out.println("reCreate map fill end" + (System.currentTimeMillis() - time));
     }
 
     public int getSize() {

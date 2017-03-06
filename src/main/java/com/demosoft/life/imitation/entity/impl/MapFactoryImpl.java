@@ -106,16 +106,37 @@ public class MapFactoryImpl implements MapFactory {
         mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, 0, mapImpl.getSize() - 1));
         mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, mapImpl.getSize() - 1, 0));
         mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, mapImpl.getSize() - 1, mapImpl.getSize() - 1));
-        float landscapeShift = 20;
-        for (int bigStep = mapImpl.getSize() - 1; bigStep >= 2; bigStep /= 2, landscapeShift /= 2.0f) {
-            int smallStep = bigStep / 2;
-            //diamond step
-            diamondStep(mapImpl, landscapeShift, bigStep, smallStep);
-            //square step
-            squareStep(mapImpl, landscapeShift, bigStep, smallStep);
-        }
-        System.out.println("MapFactoryImpl map end generateLandscape");
+        final float[] landscapeShift = {20};
+        final double[] prcent = {0};
+        int log = Integer.numberOfLeadingZeros( mapImpl.getSize() - 1);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int bigStep = mapImpl.getSize() - 1; bigStep >= 2; bigStep /= 2, landscapeShift[0] /= 2.0f) {
+                    int smallStep = bigStep / 2;
+                    //diamond step
+                    double newPercent = getPercent(log, bigStep);
+                    if (prcent[0] != newPercent) {
+                        System.out.print("Gen: " + newPercent + "% ");
+                        prcent[0] = newPercent;
+                    }
+                    diamondStep(mapImpl, landscapeShift[0], bigStep, smallStep);
+                    //square step
+                    squareStep(mapImpl, landscapeShift[0], bigStep, smallStep);
+                }
+                System.out.println("MapFactoryImpl map end generateLandscape");
+            }
+        }).start();
+
     }
+
+    private double getPercent(int log, int bigStep) {
+        int currentLog = Integer.numberOfLeadingZeros(bigStep);
+        double v = Math.abs(((double) currentLog / log) - 1);
+        int newRes = (int) (v * 10000);
+        return (double) newRes / 100;
+    }
+
 
 
     public CellImpl createCell(long value, int x, int y) {

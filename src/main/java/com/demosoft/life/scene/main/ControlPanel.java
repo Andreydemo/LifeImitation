@@ -117,8 +117,12 @@ public class ControlPanel {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 int mapSize = graphicMapFactory.getMapSize();
+                long time = System.currentTimeMillis();
                 map.reCreate(mapSize);
+                System.out.println("Map recreated :" + (System.currentTimeMillis() - time));
+                time = System.currentTimeMillis();
                 graphicMapFactory.generateLandscape(map);
+                System.out.println("Map generated :" + (System.currentTimeMillis() - time));
             }
         });
 
