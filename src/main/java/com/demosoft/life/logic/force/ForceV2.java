@@ -1,23 +1,28 @@
 package com.demosoft.life.logic.force;
 
-import com.demosoft.life.imitation.entity.*;
-import com.demosoft.life.imitation.entity.impl.CellImpl;
-import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
+import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.Human;
+import com.demosoft.life.imitation.entity.Landscape;
+import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.imitation.entity.Plant;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.LandscapeType;
 import com.demosoft.life.imitation.entity.type.PlantType;
+import com.demosoft.life.imitation.entity.v2.impl.CellImpl;
+import com.demosoft.life.imitation.entity.v2.impl.HumanImpl;
+import com.demosoft.life.imitation.entity.v2.impl.MapFactoryImpl;
 import com.demosoft.life.logic.random.XRandom;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
+import javax.swing.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.swing.*;
 
 /**
  * Created by Andrii_Korkoshko on 2/10/2017.
  */
-public class Force {
+@Component
+public class ForceV2 {
 
     private static int date = 1;
     private static Timer timer;
@@ -34,19 +39,24 @@ public class Force {
     public void start() {
         if (timer == null) {
             timer = new Timer(timerDelay, e -> {
-                for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
-                    for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
-                        map.getCellAt(y, x).setActiveFlagHuman(true);
-                        map.getCellAt(y, x).setActiveFlagPlant(true);
+                try {
+
+                    for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+                        for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
+                            map.getCellAt(x, y).setActiveFlagHuman(true);
+                            map.getCellAt(x, y).setActiveFlagPlant(true);
+                        }
                     }
-                }
-                for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
-                    for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
-                        act(((CellImpl) map.getCellAt(x, y)).getValue(), y, x);
+                    for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+                        for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
+                            act(map.getCellAt(x, y), y, x);
+                        }
                     }
+                    statistic.update();
+                    infoPanelContainer.getMapInfoPanel().update(++date);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-                statistic.update();
-                infoPanelContainer.getMapInfoPanel().update(++date);
             });
         }
         timer.start();
@@ -66,7 +76,7 @@ public class Force {
     }
 
     // ACT
-    private void act(long cellData, int y, int x) {
+    private void act(Cell cellData, int y, int x) {
         Cell cell = map.getCellAt(x, y);
         if (cell.getActiveFlagHuman() && cell.getHuman().getType() != HumanType.HUMAN_TYPE_EMPTY) {
             if (tryToDie(cell)
@@ -283,7 +293,7 @@ public class Force {
                 yShift = XRandom.generateInteger(-1, 1);
                 xShift = XRandom.generateInteger(-1, 1);
                 tryCount--;
-            } while (tryCount> 0 || !isCellInMapRange(x + xShift, y + yShift) || !canMove(map.getCellAt(x + xShift, y + yShift)));
+            } while (tryCount > 0 || !isCellInMapRange(x + xShift, y + yShift) || !canMove(map.getCellAt(x + xShift, y + yShift)));
         }
         if (yShift != 0 || xShift != 0) {
             int yTarget = y + yShift;
@@ -300,7 +310,8 @@ public class Force {
             Landscape targetLandscape = targetCell.getLandscape();
             if (targetHuman.getType() == HumanType.HUMAN_TYPE_EMPTY) {
                 moveHuman(y, x, yTarget, xTarget);
-                if (targetLandscape.getType() == LandscapeType.LANDSCAPE_TYPE_WATER_LOW || targetLandscape.getType() == LandscapeType.LANDSCAPE_TYPE_WATER_HIGH) {
+                if (targetLandscape.getType() == LandscapeType.LANDSCAPE_TYPE_WATER_LOW
+                        || targetLandscape.getType() == LandscapeType.LANDSCAPE_TYPE_WATER_HIGH) {
                     targetHuman.setEnergy(targetHuman.getEnergy() - 3);
                     targetHuman.setSatiety(targetHuman.getSatiety() - 3);
                 } else {
@@ -348,7 +359,7 @@ public class Force {
                 if (landscapeTarget != LandscapeType.LANDSCAPE_TYPE_WATER_LOW
                         && landscapeTarget != LandscapeType.LANDSCAPE_TYPE_WATER_HIGH
                         && humanTarget == HumanType.HUMAN_TYPE_EMPTY
-                        && plantTarget == PlantType.PLANT_TYPE_EMPTY  && canMove(targetCell)) {
+                        && plantTarget == PlantType.PLANT_TYPE_EMPTY && canMove(targetCell)) {
                     targetCell.getPlant().setType(PlantType.PLANT_TYPE_APPLE);
                 }
             }
@@ -356,14 +367,10 @@ public class Force {
     }
 
     private void moveHuman(int yFrom, int xFrom, int yTo, int xTo) {
-        Human humanFrom = map.getCellAt(xFrom, yFrom).getHuman();
-        Human humanTo = map.getCellAt(xTo, yTo).getHuman();
-        humanTo.setType(humanFrom.getType());
-        humanTo.setAge(humanFrom.getAge());
-        humanTo.setEnergy(humanFrom.getEnergy());
-        humanTo.setSatiety(humanFrom.getSatiety());
-        humanTo.setPregnancy(humanFrom.getPregnancy());
-        clearHuman(humanFrom);
+        Cell cellFrom = map.getCellAt(xFrom, yFrom);
+        Human humanFrom = cellFrom.getHuman();
+        map.getCellAt(xTo, yTo).setHuman(humanFrom);
+        cellFrom.setHuman(new HumanImpl(cellFrom));
     }
 
     private void clearHuman(Human human) {

@@ -29,12 +29,12 @@ public interface Cell {
 
     Landscape getLandscape();
 
-    void setActiveFlagHuman(boolean activeFlagHuman);
+    void setActiveFlagHuman(Boolean activeFlagHuman);
 
-    boolean getActiveFlagHuman();
+    Boolean getActiveFlagHuman();
 
-    void setActiveFlagPlant(boolean activeFlagPlant);
+    void setActiveFlagPlant(Boolean activeFlagPlant);
 
-    boolean getActiveFlagPlant();
+    Boolean getActiveFlagPlant();
 
 }

@@ -79,4 +79,6 @@ public enum LandscapeType {
     public final static long LANDSCAPE_TYPE_MASK = 0x0000_0000_0000_000FL;
     public final static int LANDSCAPE_TYPE_SHIFT = 0;
     public final static int LANDSCAPE_MAX_VALUE = LANDSCAPE_TYPE_ICE.value;
+    public final static LandscapeType LANDSCAPE_MAX = LANDSCAPE_TYPE_ICE;
+    public final static LandscapeType LANDSCAPE_MIN = LANDSCAPE_TYPE_EMPTY;
 }

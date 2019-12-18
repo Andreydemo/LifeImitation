@@ -3,12 +3,10 @@ package com.demosoft.life.imitation.entity.graphic.impl;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.demosoft.life.imitation.entity.Cell;
-import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.MapFactory;
 import com.demosoft.life.imitation.entity.graphic.GraphicCell;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
-import com.demosoft.life.imitation.entity.impl.CellImpl;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
+import com.demosoft.life.imitation.entity.v2.impl.MapImpl;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
@@ -47,7 +45,7 @@ public class GraphicMapImpl extends MapImpl implements GraphicMap {
     }
 
     @Override
-    public void setCell(CellImpl cell) {
+    public void setCell(Cell cell) {
         map.setCell(cell);
     }
 

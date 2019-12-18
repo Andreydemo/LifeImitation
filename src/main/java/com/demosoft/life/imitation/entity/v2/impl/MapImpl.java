@@ -1,4 +1,4 @@
-package com.demosoft.life.imitation.entity.impl;
+package com.demosoft.life.imitation.entity.v2.impl;
 
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Map;
@@ -37,7 +37,7 @@ public class MapImpl implements Map {
                 precent = newPrecent;
             }
             for (int j = 0; j < cells[0].length; j++) {
-                cells[i][j] = mapFactory.createCell(0, i, j);
+                cells[i][j] = mapFactory.createCell(i, j);
             }
         }
     }
@@ -77,7 +77,7 @@ public class MapImpl implements Map {
     @Override
     public Cell getCellAt(int x, int y) {
         if (notInRange(x, y)) {
-            return mapFactory.createCell(0, x, y);
+            return mapFactory.createCell(x, y);
         }
         if (cells[x][y] == null) {
             cells[x][y] = mapFactory.createCell();

@@ -1,6 +1,5 @@
 package com.demosoft.life.imitation.entity.graphic.impl;
 
-import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.Landscape;
 import com.demosoft.life.imitation.entity.Plant;
@@ -8,7 +7,7 @@ import com.demosoft.life.imitation.entity.graphic.GraphicCell;
 import com.demosoft.life.imitation.entity.graphic.GraphicHuman;
 import com.demosoft.life.imitation.entity.graphic.GraphicLandscape;
 import com.demosoft.life.imitation.entity.graphic.GraphicPlant;
-import com.demosoft.life.imitation.entity.impl.CellImpl;
+import com.demosoft.life.imitation.entity.v2.impl.CellImpl;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
@@ -22,12 +21,12 @@ public class GraphicCellImpl extends CellImpl implements GraphicCell {
     }
 
     @Override
-    public boolean getActiveFlagHuman() {
+    public Boolean getActiveFlagHuman() {
         return baseCell.getActiveFlagHuman();
     }
 
     @Override
-    public boolean getActiveFlagPlant() {
+    public Boolean getActiveFlagPlant() {
         return baseCell.getActiveFlagPlant();
     }
 
@@ -47,11 +46,6 @@ public class GraphicCellImpl extends CellImpl implements GraphicCell {
     }
 
     @Override
-    public long getValue() {
-        return baseCell.getValue();
-    }
-
-    @Override
     public int getX() {
         return baseCell.getX();
     }
@@ -62,12 +56,12 @@ public class GraphicCellImpl extends CellImpl implements GraphicCell {
     }
 
     @Override
-    public void setActiveFlagHuman(boolean activeFlagHuman) {
+    public void setActiveFlagHuman(Boolean activeFlagHuman) {
         baseCell.setActiveFlagHuman(activeFlagHuman);
     }
 
     @Override
-    public void setActiveFlagPlant(boolean activeFlagPlant) {
+    public void setActiveFlagPlant(Boolean activeFlagPlant) {
         baseCell.setActiveFlagPlant(activeFlagPlant);
     }
 
@@ -84,11 +78,6 @@ public class GraphicCellImpl extends CellImpl implements GraphicCell {
     @Override
     public void setPlant(Plant plant) {
         baseCell.setPlant(plant);
-    }
-
-    @Override
-    public void setValue(long value) {
-        baseCell.setValue(value);
     }
 
     @Override

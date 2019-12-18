@@ -1,11 +1,18 @@
-package com.demosoft.life.imitation.entity.impl;
+package com.demosoft.life.imitation.entity.v2.impl;
 
-import com.demosoft.life.imitation.entity.*;
+import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX;
+import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MIN;
+
+import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.Human;
+import com.demosoft.life.imitation.entity.Landscape;
+import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.imitation.entity.MapFactory;
+import com.demosoft.life.imitation.entity.Plant;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.LandscapeType;
 import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.logic.random.XRandom;
-
 import java.util.Random;
 
 /**
@@ -43,11 +50,7 @@ public class MapFactoryImpl implements MapFactory {
         MapImpl mapImpl = (MapImpl) map;
         cleanHumans(mapImpl);
         for (int i = 0; i < menCount; i++) {
-            if (menCount > 0) {
-                menCount = tryGenerateMens(mapImpl, menCount);
-            } else {
-                break;
-            }
+            menCount = tryGenerateMens(mapImpl, menCount);
         }
 
         for (int i = 0; i < womanCount; i++) {
@@ -66,12 +69,8 @@ public class MapFactoryImpl implements MapFactory {
         MapImpl mapImpl = (MapImpl) map;
         cleanTrees(mapImpl);
         for (int i = 0; i < count; i++) {
-            if (count > 0) {
-                count = tryGeneratePlant(mapImpl, count);
+            count = tryGeneratePlant(mapImpl, count);
 
-            } else {
-                break;
-            }
         }
         System.out.println("MapFactoryImpl map end generatePlants");
     }
@@ -102,10 +101,10 @@ public class MapFactoryImpl implements MapFactory {
         System.out.println("MapFactoryImpl map start generateLandscape");
         MapImpl mapImpl = (MapImpl) map;
 
-        mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, 0, 0));
-        mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, 0, mapImpl.getSize() - 1));
-        mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, mapImpl.getSize() - 1, 0));
-        mapImpl.setCell(createCell(LandscapeType.LANDSCAPE_MAX_VALUE, mapImpl.getSize() - 1, mapImpl.getSize() - 1));
+        mapImpl.setCell(createCell(0, 0));
+        mapImpl.setCell(createCell(0, mapImpl.getSize() - 1));
+        mapImpl.setCell(createCell(mapImpl.getSize() - 1, 0));
+        mapImpl.setCell(createCell(mapImpl.getSize() - 1, mapImpl.getSize() - 1));
         final float[] landscapeShift = {20};
         final double[] prcent = {0};
         int log = Integer.numberOfLeadingZeros(mapImpl.getSize() - 1);
@@ -138,9 +137,8 @@ public class MapFactoryImpl implements MapFactory {
     }
 
 
-    public CellImpl createCell(long value, int x, int y) {
+    public CellImpl createCell(int x, int y) {
         CellImpl cell = (CellImpl) this.createCell();
-        cell.setValue(value);
         cell.setX(x);
         cell.setY(y);
         cell.setHuman(this.createHuman(cell));
@@ -149,6 +147,15 @@ public class MapFactoryImpl implements MapFactory {
         return cell;
     }
 
+    public CellImpl createCell(LandscapeType landscapeType, int x, int y) {
+        CellImpl cell = (CellImpl) this.createCell();
+        cell.setX(x);
+        cell.setY(y);
+        cell.setHuman(this.createHuman(cell));
+        cell.setLandscape(this.createLandscape(cell, landscapeType));
+        cell.setPlant(this.createPlant(cell));
+        return cell;
+    }
 
     @Override
     public Human createHuman(Cell cell) {
@@ -157,12 +164,16 @@ public class MapFactoryImpl implements MapFactory {
 
     @Override
     public Landscape createLandscape(Cell cell) {
-        return new LandscapeImpl((CellImpl) cell);
+        LandscapeImpl landscape = new LandscapeImpl((CellImpl) cell);
+        landscape.setType(LANDSCAPE_MIN);
+        return landscape;
     }
 
     @Override
-    public Landscape createLandscape(Cell cell, LandscapeType type) {
-        return new LandscapeImpl((CellImpl) cell);
+    public Landscape createLandscape(Cell cell, LandscapeType landscapeType) {
+        LandscapeImpl landscape = new LandscapeImpl((CellImpl) cell);
+        landscape.setType(landscapeType);
+        return landscape;
     }
 
     @Override
@@ -275,7 +286,8 @@ public class MapFactoryImpl implements MapFactory {
                 float average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4;
                 int centralValue = (int) (average + random.nextInt(3) * landscapeShift
                         - landscapeShift); // -landscapeShift 0 landscapeShift
-                map.setCell(createCell(getValueInRange(centralValue, 1, LandscapeType.LANDSCAPE_MAX_VALUE), x, y));
+                int landscapeType = getValueInRange(centralValue);
+                map.setCell(createCell(LandscapeType.getByValue(landscapeType), x, y));
             }
         }
     }
@@ -290,14 +302,14 @@ public class MapFactoryImpl implements MapFactory {
                 long rightValue = map.getCellAt(y, (x + smallStep) % (map.getSize() - 1)).getLandscape().getHeight();
                 long bottomValue = map.getCellAt((y + smallStep) % (map.getSize() - 1), x).getLandscape().getHeight();
                 float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
-                int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift), 1,
-                        LandscapeType.LANDSCAPE_MAX_VALUE);
-                map.setCell(createCell(centerValue, y, x));
+                int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift)
+                );
+                map.setCell(createCell(LandscapeType.getByValue(centerValue), x, y));
             }
         }
     }
 
-    private int getValueInRange(int value, int min, int max) {
-        return Math.max(Math.min(value, max), min);
+    private int getValueInRange(int value) {
+        return Math.max(Math.min(value, LandscapeType.LANDSCAPE_MAX_VALUE), 1);
     }
 }

@@ -74,22 +74,22 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public void setActiveFlagHuman(boolean activeFlagHuman) {
+    public void setActiveFlagHuman(Boolean activeFlagHuman) {
         setValue(UcfCoder.encodeActiveFlagHuman(value, XMath.getValueInRange(booleanToInt(activeFlagHuman), 0, 1)));
     }
 
     @Override
-    public boolean getActiveFlagHuman() {
+    public Boolean getActiveFlagHuman() {
         return intToBoolean(UcfCoder.decodeActiveFlagHuman(value));
     }
 
     @Override
-    public void setActiveFlagPlant(boolean activeFlagPlant) {
+    public void setActiveFlagPlant(Boolean activeFlagPlant) {
         setValue(UcfCoder.encodeActiveFlagPlant(value, XMath.getValueInRange(booleanToInt(activeFlagPlant), 0, 1)));
     }
 
     @Override
-    public boolean getActiveFlagPlant() {
+    public Boolean getActiveFlagPlant() {
         return intToBoolean(UcfCoder.decodeActiveFlagPlant(value));
     }
 

@@ -3,13 +3,8 @@ package com.demosoft.life.scene.main.info;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.demosoft.life.assets.AssetsLoader;
-import com.demosoft.life.imitation.entity.*;
-import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.graphic.*;
-import com.demosoft.life.imitation.entity.impl.CellImpl;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
-import com.demosoft.life.imitation.entity.impl.UcfCoder;
-import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.spring.ContextContainer;
@@ -56,13 +51,11 @@ public class CellInfoPanel {
 
     public void update(int x, int y) {
         GraphicCell cell = map.getCellAt(x, y);
-        long cellData = ((CellImpl) cell).getValue();
         GraphicLandscape graphicLandscape = cell.getGraphicLandscape();
-        GraphicHuman graphicHuman = cell.getGraphicHuman();
+        Human graphicHuman = cell.getHuman();
         GraphicPlant graphicPlant = cell.getGraphicPlant();
-        String info = String.format("Raw: %s\n"
-                        + "\n Raw value: %s\n\n"
-                        + "\n LandscapeType type as string: %s"
+        String info = String.format(
+                "LandscapeType type as string: %s"
                         + "\n LandscapeType type: %s"
                         + "\n "
                         + "\n x : %s; y : %s"
@@ -78,14 +71,12 @@ public class CellInfoPanel {
                         + "\n "
                         + "\n Active flag (GraphicHuman): %s"
                         + "\n Active flag (PlantType): %s",
-                XFormatter.formatRaw(cellData),
-                cellData,
                 graphicLandscape.getMessage(),
                 graphicLandscape.getType().getValue(),
                 x, y,
                 graphicHuman.getType().getValue(),
                 XFormatter.formatDate(graphicHuman.getAge()),
-                graphicHuman.getAge(),
+                graphicHuman.getEnergy(),
                 graphicHuman.getSatiety(),
                 XFormatter.formatDate(graphicHuman.getPregnancy()),
                 graphicPlant.getType().getValue(),

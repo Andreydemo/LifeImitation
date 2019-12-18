@@ -1,9 +1,7 @@
 package com.demosoft.life;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import org.lwjgl.opengl.Display;
 
 /**
  * Created by andrii_korkoshko on 23.01.17.
@@ -22,6 +20,7 @@ public class Launcher {
         try {
             new LwjglApplication(game, cfg);
         } catch (Throwable e) {
+            e.printStackTrace();
             System.exit(0);
         }
     }

@@ -1,5 +1,7 @@
 package com.demosoft.life.imitation.entity;
 
+import com.demosoft.life.imitation.entity.type.LandscapeType;
+
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
@@ -16,6 +18,8 @@ public interface MapFactory {
     Human createHuman(Cell cell);
 
     Landscape createLandscape(Cell cell);
+
+    Landscape createLandscape(Cell cell, LandscapeType type);
 
     Plant createPlant(Cell cell);
 

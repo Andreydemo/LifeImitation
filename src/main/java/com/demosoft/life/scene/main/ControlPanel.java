@@ -15,6 +15,7 @@ import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
 import com.demosoft.life.imitation.entity.impl.MapImpl;
 import com.demosoft.life.logic.force.Force;
+import com.demosoft.life.logic.force.ForceV2;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import com.demosoft.life.spring.ContextContainer;
@@ -62,7 +63,7 @@ public class ControlPanel {
     private Statistic statistic;
 
     @Autowired
-    private Force force;
+    private ForceV2 force;
 
     @Autowired
     InfoPanelContainer infoPanelContainer;

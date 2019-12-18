@@ -1,12 +1,16 @@
 package com.demosoft.life.imitation.entity.graphic.impl;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.demosoft.life.imitation.entity.*;
+import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.Human;
+import com.demosoft.life.imitation.entity.Landscape;
+import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.imitation.entity.Plant;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
 import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
-import com.demosoft.life.imitation.entity.impl.CellImpl;
-import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
+import com.demosoft.life.imitation.entity.type.LandscapeType;
+import com.demosoft.life.imitation.entity.v2.impl.CellImpl;
+import com.demosoft.life.imitation.entity.v2.impl.MapFactoryImpl;
+import com.demosoft.life.imitation.entity.v2.impl.MapImpl;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
@@ -43,6 +47,11 @@ public class GraphicMapFactoryImpl extends MapFactoryImpl implements GraphicMapF
     @Override
     public Landscape createLandscape(Cell cell) {
         return new GraphicLandscapeImpl(super.createLandscape(cell));
+    }
+
+    @Override
+    public Landscape createLandscape(Cell cell, LandscapeType type) {
+        return new GraphicLandscapeImpl(super.createLandscape(cell, type ));
     }
 
     @Override
