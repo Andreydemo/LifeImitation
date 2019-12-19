@@ -17,7 +17,8 @@ import com.demosoft.life.logic.random.XRandom;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
 import java.util.Optional;
-import javax.swing.Timer;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,9 @@ public class ForceV2 {
 
     private static int date = 1;
     private static Timer timer;
-    private static int timerDelay = 50;
+    private int timerDelay = timerDelayBase;
+    private static int timerDelayBase = 500;
+    private boolean running = false;
 
     @Autowired
     private Map map;
@@ -39,41 +42,93 @@ public class ForceV2 {
     @Autowired
     private InfoPanelContainer infoPanelContainer;
 
+    private final Runnable mainTask = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                running = true;
+                for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+                    for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
+                        map.getCellAt(x, y).getHuman().ifPresent(human -> human.setActive(true));
+                        map.getCellAt(x, y).getPlant().ifPresent(plant -> plant.setActive(true));
+                    }
+                }
+                for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
+                    for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
+                        act(map.getCellAt(x, y), y, x);
+                    }
+                }
+                statistic.update();
+                infoPanelContainer.getMapInfoPanel().update(++date);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    };
+    private int speed = 1;
+
     public void start() {
         if (timer == null) {
-            timer = new Timer(timerDelay, e -> {
-                try {
-
-                    for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
-                        for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
-                            map.getCellAt(x, y).getHuman().ifPresent(human -> human.setActive(true));
-                            map.getCellAt(x, y).getPlant().ifPresent(plant -> plant.setActive(true));
-                        }
-                    }
-                    for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
-                        for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
-                            act(map.getCellAt(x, y), y, x);
-                        }
-                    }
-                    statistic.update();
-                    infoPanelContainer.getMapInfoPanel().update(++date);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            });
+            timer = new Timer();
         }
-        timer.start();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mainTask.run();
+            }
+        } , 0, timerDelay);
+    }
+
+    public void applySpeed() {
+        if (running) {
+            restart();
+        }
+    }
+
+    public void incSpeed() {
+        if (speed < 10) {
+            speed++;
+            timerDelay = timerDelayBase / speed;
+        }
+    }
+
+    public void decSpeed() {
+        if (speed > 1) {
+            speed--;
+            timerDelay = timerDelayBase / speed;
+        }
+    }
+
+    public int speed() {
+        return this.speed;
+    }
+
+    private void restart() {
+        timer.cancel();
+        timer.purge();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mainTask.run();
+            }
+        } , 0, timerDelay);
     }
 
     public void pause() {
         if (timer != null) {
-            timer.stop();
+            timer.cancel();
+            timer.purge();
+            running = false;
         }
     }
 
     public void stop() {
         if (timer != null) {
-            timer.stop();
+            timer.cancel();
+            timer.purge();
+            running = false;
         }
         date = 1;
     }

@@ -48,6 +48,14 @@ public class ControlPanel {
     private TextButton incMapSize;
     private TextButton decMapSize;
 
+    private TextField speed;
+    private Label speed_Label;
+    private Label speed_Current;
+    private Label speed_Current_Label;
+    private TextButton incSpeed;
+    private TextButton decSpeed;
+    private TextButton applySpeed;
+
     @Autowired
     private AssetsLoader assetsLoader;
 
@@ -79,6 +87,56 @@ public class ControlPanel {
         initGeneratePlantsButton(skin);
         initGenerateHumansButton(skin);
         initMapSizeEditor(skin);
+        initSpeedEditor(skin);
+    }
+
+    private void initSpeedEditor(Skin skin) {
+        speed = new TextField(String.valueOf(force.speed()), skin);
+        speed.setBounds(600, context.translateY(Gdx.graphics.getHeight() - 50), 25, 25);
+
+        applySpeed = new TextButton("apply", skin);
+        applySpeed.setBounds(700, context.translateY(Gdx.graphics.getHeight() - 50), 50, 25);
+        applySpeed.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                force.applySpeed();
+                speed.setText(String.valueOf(force.speed()));
+                speed_Current.setText(force.speed());
+            }
+        });
+
+        incSpeed = new TextButton("->", skin);
+        incSpeed.setBounds(625, context.translateY(Gdx.graphics.getHeight() - 50), 25, 25);
+        incSpeed.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                force.incSpeed();
+                speed.setText(String.valueOf(force.speed()));
+            }
+        });
+
+        decSpeed = new TextButton("<-", skin);
+        decSpeed.setBounds(575, context.translateY(Gdx.graphics.getHeight() - 50), 25, 25);
+        decSpeed.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                force.decSpeed();
+                speed.setText(String.valueOf(force.speed()));
+            }
+        });
+
+        speed_Label = new Label("new speed", skin);
+        speed_Label.setBounds(585, context.translateY(Gdx.graphics.getHeight() - 75), 50, 25);
+
+        speed_Current_Label = new Label("current", skin);
+        speed_Current_Label.setBounds(650, context.translateY(Gdx.graphics.getHeight() - 75), 50, 25);
+
+        speed_Current = new Label(String.valueOf(force.speed()), skin);
+        speed_Current.setBounds(675, context.translateY(Gdx.graphics.getHeight() - 50), 50, 25);
+
     }
 
     private void initMapSizeEditor(Skin skin) {
@@ -152,7 +210,6 @@ public class ControlPanel {
         generateHumansButton = new TextButton("GENERATE Humans", skin);
         generateHumansButton.setBounds(1300, context.translateY(Gdx.graphics.getHeight() - 25), 200, 25);
 
-
         humansMenCount = new TextField("10", skin);
         humansMenCount.setBounds(1550, context.translateY(Gdx.graphics.getHeight() - 25), 50, 25);
         humansMenCount.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
@@ -167,12 +224,12 @@ public class ControlPanel {
         humansWomanCount_Label = new Label("woman count", skin);
         humansWomanCount_Label.setBounds(1650, context.translateY(Gdx.graphics.getHeight() - 50), 100, 25);
 
-
         generateHumansButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                mapFactory.generatePeoples(map, Integer.valueOf(humansMenCount.getText()), Integer.valueOf(humansWomanCount.getText()));
+                mapFactory.generatePeoples(map, Integer.valueOf(humansMenCount.getText()),
+                        Integer.valueOf(humansWomanCount.getText()));
             }
         });
 
@@ -249,5 +306,13 @@ public class ControlPanel {
         stage.addActor(incMapSize);
         stage.addActor(decMapSize);
         stage.addActor(mapSize);
+
+        stage.addActor(incSpeed);
+        stage.addActor(decSpeed);
+        stage.addActor(speed_Current_Label);
+        stage.addActor(applySpeed);
+        stage.addActor(speed);
+        stage.addActor(speed_Label);
+        stage.addActor(speed_Current);
     }
 }
