@@ -5,7 +5,9 @@ import com.demosoft.life.imitation.entity.Landscape;
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
-public interface GraphicLandscape extends Landscape {
+public interface GraphicLandscape {
+
+    Landscape getLandscape();
 
     int getColor();
 

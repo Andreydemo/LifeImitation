@@ -6,7 +6,9 @@ import com.demosoft.life.imitation.entity.Map;
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
-public interface GraphicMap extends Map {
+public interface GraphicMap {
+
+    Map getMap();
 
     int getSelectedY();
 

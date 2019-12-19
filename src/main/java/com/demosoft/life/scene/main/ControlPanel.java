@@ -12,9 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
-import com.demosoft.life.imitation.entity.impl.MapImpl;
-import com.demosoft.life.logic.force.Force;
+import com.demosoft.life.imitation.entity.MapFactory;
 import com.demosoft.life.logic.force.ForceV2;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
@@ -57,6 +55,9 @@ public class ControlPanel {
     private Map map;
 
     @Autowired
+    private MapFactory mapFactory;
+
+    @Autowired
     private ContextContainer context;
 
     @Autowired
@@ -67,9 +68,6 @@ public class ControlPanel {
 
     @Autowired
     InfoPanelContainer infoPanelContainer;
-
-    @Autowired
-    private GraphicMapFactory graphicMapFactory;
 
     @PostConstruct
     void init() {
@@ -84,7 +82,7 @@ public class ControlPanel {
     }
 
     private void initMapSizeEditor(Skin skin) {
-        mapSize = new TextField(String.valueOf(graphicMapFactory.getMapSize()), skin);
+        mapSize = new TextField(String.valueOf(mapFactory.getMapSize()), skin);
         mapSize.setBounds(1100, context.translateY(Gdx.graphics.getHeight() - 50), 50, 25);
 
         incMapSize = new TextButton("->", skin);
@@ -93,8 +91,8 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                graphicMapFactory.incMapSize();
-                mapSize.setText(String.valueOf(graphicMapFactory.getMapSize()));
+                mapFactory.incMapSize();
+                mapSize.setText(String.valueOf(mapFactory.getMapSize()));
             }
         });
 
@@ -104,8 +102,8 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                graphicMapFactory.decMapSize();
-                mapSize.setText(String.valueOf(graphicMapFactory.getMapSize()));
+                mapFactory.decMapSize();
+                mapSize.setText(String.valueOf(mapFactory.getMapSize()));
             }
         });
     }
@@ -117,12 +115,12 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                int mapSize = graphicMapFactory.getMapSize();
+                int mapSize = mapFactory.getMapSize();
                 long time = System.currentTimeMillis();
                 map.reCreate(mapSize);
                 System.out.println("Map recreated :" + (System.currentTimeMillis() - time));
                 time = System.currentTimeMillis();
-                graphicMapFactory.generateLandscape(map);
+                mapFactory.generateLandscape(map);
                 System.out.println("Map generated :" + (System.currentTimeMillis() - time));
             }
         });
@@ -144,7 +142,7 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                graphicMapFactory.generatePlants(map, Integer.valueOf(plantsCount.getText()));
+                mapFactory.generatePlants(map, Integer.valueOf(plantsCount.getText()));
             }
         });
 
@@ -174,7 +172,7 @@ public class ControlPanel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                graphicMapFactory.generatePeoples(map, Integer.valueOf(humansMenCount.getText()), Integer.valueOf(humansWomanCount.getText()));
+                mapFactory.generatePeoples(map, Integer.valueOf(humansMenCount.getText()), Integer.valueOf(humansWomanCount.getText()));
             }
         });
 

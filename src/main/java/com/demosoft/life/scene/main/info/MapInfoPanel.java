@@ -1,7 +1,9 @@
 package com.demosoft.life.scene.main.info;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.format.XFormatter;

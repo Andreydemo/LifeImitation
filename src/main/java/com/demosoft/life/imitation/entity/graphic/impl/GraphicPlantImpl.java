@@ -31,6 +31,11 @@ public class GraphicPlantImpl implements GraphicPlant {
     }
 
     @Override
+    public Plant getPlant() {
+        return plant;
+    }
+
+    @Override
     public int getColor() {
         return getType().getColor();
     }
@@ -45,8 +50,4 @@ public class GraphicPlantImpl implements GraphicPlant {
         return getType().getMessage();
     }
 
-    @Override
-    public void setMessage(String message) {
-        throw new IllegalArgumentException();
-    }
 }

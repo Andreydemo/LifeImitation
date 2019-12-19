@@ -9,31 +9,21 @@ import com.demosoft.life.imitation.entity.type.LandscapeType;
  */
 public class GraphicLandscapeImpl implements GraphicLandscape {
 
-    private Landscape baseLandscape;
+    private Landscape landscape;
 
-    public GraphicLandscapeImpl(Landscape baseLandscape) {
+    public GraphicLandscapeImpl(Landscape landscape) {
 
-        this.baseLandscape = baseLandscape;
+        this.landscape = landscape;
     }
 
     @Override
-    public LandscapeType getType() {
-        return baseLandscape.getType();
-    }
-
-    @Override
-    public void setHeight(int height) {
-        baseLandscape.setHeight(height);
-    }
-
-    @Override
-    public void setType(LandscapeType landscapeType) {
-        baseLandscape.setType(landscapeType);
+    public Landscape getLandscape() {
+        return landscape;
     }
 
     @Override
     public int getColor() {
-        return getType().getColor();
+        return landscape.getType().getColor();
     }
 
     @Override
@@ -43,7 +33,7 @@ public class GraphicLandscapeImpl implements GraphicLandscape {
 
     @Override
     public String getMessage() {
-        return getType().getMessage();
+        return landscape.getType().getMessage();
     }
 
     @Override
@@ -51,8 +41,4 @@ public class GraphicLandscapeImpl implements GraphicLandscape {
         throw new IllegalArgumentException();
     }
 
-    @Override
-    public int getHeight() {
-        return baseLandscape.getHeight();
-    }
 }

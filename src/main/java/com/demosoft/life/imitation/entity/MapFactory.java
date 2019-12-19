@@ -15,13 +15,13 @@ public interface MapFactory {
 
     Cell createCell();
 
-    Human createHuman(Cell cell);
+    Human createHuman();
 
-    Landscape createLandscape(Cell cell);
+    Landscape createLandscape();
 
-    Landscape createLandscape(Cell cell, LandscapeType type);
+    Landscape createLandscape(LandscapeType type);
 
-    Plant createPlant(Cell cell);
+    Plant createPlant();
 
     void generatePeoples(Map map, int menCount, int womanCount);
 

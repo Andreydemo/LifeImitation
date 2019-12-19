@@ -1,6 +1,7 @@
 package com.demosoft.life.imitation.entity.v2.impl;
 
 import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX;
+import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX_VALUE;
 import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MIN;
 
 import com.demosoft.life.imitation.entity.Cell;
@@ -13,6 +14,7 @@ import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.LandscapeType;
 import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.logic.random.XRandom;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -101,10 +103,10 @@ public class MapFactoryImpl implements MapFactory {
         System.out.println("MapFactoryImpl map start generateLandscape");
         MapImpl mapImpl = (MapImpl) map;
 
-        mapImpl.setCell(createCell(0, 0));
-        mapImpl.setCell(createCell(0, mapImpl.getSize() - 1));
-        mapImpl.setCell(createCell(mapImpl.getSize() - 1, 0));
-        mapImpl.setCell(createCell(mapImpl.getSize() - 1, mapImpl.getSize() - 1));
+        mapImpl.setCell(createCell(LANDSCAPE_MAX, 0, 0));
+        mapImpl.setCell(createCell(LANDSCAPE_MAX, 0, mapImpl.getSize() - 1));
+        mapImpl.setCell(createCell(LANDSCAPE_MAX, mapImpl.getSize() - 1, 0));
+        mapImpl.setCell(createCell(LANDSCAPE_MAX, mapImpl.getSize() - 1, mapImpl.getSize() - 1));
         final float[] landscapeShift = {20};
         final double[] prcent = {0};
         int log = Integer.numberOfLeadingZeros(mapImpl.getSize() - 1);
@@ -141,9 +143,6 @@ public class MapFactoryImpl implements MapFactory {
         CellImpl cell = (CellImpl) this.createCell();
         cell.setX(x);
         cell.setY(y);
-        cell.setHuman(this.createHuman(cell));
-        cell.setLandscape(this.createLandscape(cell));
-        cell.setPlant(this.createPlant(cell));
         return cell;
     }
 
@@ -151,34 +150,28 @@ public class MapFactoryImpl implements MapFactory {
         CellImpl cell = (CellImpl) this.createCell();
         cell.setX(x);
         cell.setY(y);
-        cell.setHuman(this.createHuman(cell));
-        cell.setLandscape(this.createLandscape(cell, landscapeType));
-        cell.setPlant(this.createPlant(cell));
+        cell.setLandscape(new LandscapeImpl(landscapeType));
         return cell;
     }
 
     @Override
-    public Human createHuman(Cell cell) {
-        return new HumanImpl((CellImpl) cell);
+    public Human createHuman() {
+        return new HumanImpl();
     }
 
     @Override
-    public Landscape createLandscape(Cell cell) {
-        LandscapeImpl landscape = new LandscapeImpl((CellImpl) cell);
-        landscape.setType(LANDSCAPE_MIN);
-        return landscape;
+    public Landscape createLandscape() {
+        return new LandscapeImpl(LANDSCAPE_MIN);
     }
 
     @Override
-    public Landscape createLandscape(Cell cell, LandscapeType landscapeType) {
-        LandscapeImpl landscape = new LandscapeImpl((CellImpl) cell);
-        landscape.setType(landscapeType);
-        return landscape;
+    public Landscape createLandscape(LandscapeType landscapeType) {
+        return new LandscapeImpl(landscapeType);
     }
 
     @Override
-    public Plant createPlant(Cell cell) {
-        return new PlantImpl((CellImpl) cell);
+    public Plant createPlant() {
+        return new PlantImpl();
     }
 
     @Override
@@ -190,8 +183,8 @@ public class MapFactoryImpl implements MapFactory {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
                 LandscapeType landscape = cell.getLandscape().getType();
-                HumanType human = cell.getHuman().getType();
-                if (!landscape.isRockBlock() && !landscape.isWatterBlock() && human == HumanType.HUMAN_TYPE_EMPTY) {
+                Optional<Human> human = cell.getHuman();
+                if (!landscape.isRockBlock() && !landscape.isWatterBlock() && !human.isPresent()) {
                     if (XRandom.generateBoolean(1) && menCount > 0) {
                         menCount--;
                         placeWoman(cell);
@@ -203,22 +196,24 @@ public class MapFactoryImpl implements MapFactory {
     }
 
     private void placeWoman(Cell cell) {
-        cell.getHuman().setType(HumanType.HUMAN_TYPE_WOMAN);
-        initHuman(cell);
+        HumanImpl human = new HumanImpl();
+        human.setType(HumanType.HUMAN_TYPE_WOMAN);
+        initHuman(human);
+        cell.setHuman(human);
     }
 
-    private void initHuman(Cell cell) {
-        cell.getHuman().setAge(30 * 300);
-        cell.getHuman().setEnergy(63);
-        cell.getHuman().setSatiety(63);
+    private void initHuman(Human human) {
+        human.setAge(30 * 300);
+        human.setEnergy(63);
+        human.setSatiety(63);
     }
 
     private int tryGenerateMens(Map mapImpl, int menCount) {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
                 LandscapeType landscape = cell.getLandscape().getType();
-                HumanType human = cell.getHuman().getType();
-                if (!landscape.isRockBlock() && !landscape.isWatterBlock() && human == HumanType.HUMAN_TYPE_EMPTY) {
+                Optional<Human> human = cell.getHuman();
+                if (!landscape.isRockBlock() && !landscape.isWatterBlock() && !human.isPresent()) {
                     if (XRandom.generateBoolean(1) && menCount > 0) {
                         menCount--;
                         placeMan(cell);
@@ -230,16 +225,16 @@ public class MapFactoryImpl implements MapFactory {
     }
 
     private void placeMan(Cell cell) {
-        cell.getHuman().setType(HumanType.HUMAN_TYPE_MAN);
-        initHuman(cell);
+        HumanImpl human = new HumanImpl();
+        human.setType(HumanType.HUMAN_TYPE_MAN);
+        initHuman(human);
+        cell.setHuman(human);
     }
 
     private void cleanHumans(Map map) {
         for (Cell[] cellRow : map.getCells()) {
             for (Cell cell : cellRow) {
-                if (cell.getHuman().getType() != HumanType.HUMAN_TYPE_EMPTY) {
-                    cell.getHuman().setType(HumanType.HUMAN_TYPE_EMPTY);
-                }
+                cell.setHuman(null);
             }
         }
     }
@@ -248,9 +243,7 @@ public class MapFactoryImpl implements MapFactory {
     private void cleanTrees(Map mapImpl) {
         for (Cell[] cellRow : mapImpl.getCells()) {
             for (Cell cell : cellRow) {
-                if (cell.getPlant().getType() != PlantType.PLANT_TYPE_EMPTY) {
-                    cell.getPlant().setType(PlantType.PLANT_TYPE_EMPTY);
-                }
+                cell.setPlant(null);
             }
         }
     }
@@ -271,9 +264,8 @@ public class MapFactoryImpl implements MapFactory {
     }
 
     private void placeTree(Cell cell) {
-        PlantType plant = PlantType.getByValue(XRandom.generateInteger(1, 3));
-        cell.getPlant().setType(plant);
-        cell.getPlant().setFruits(30);
+        PlantType plantType = PlantType.getByValue(XRandom.generateInteger(1, 3));
+        cell.setPlant(new PlantImpl(plantType, 30, false));
     }
 
     private void diamondStep(Map map, float landscapeShift, int bigStep, int smallStep) {

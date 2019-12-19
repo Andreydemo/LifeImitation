@@ -1,10 +1,10 @@
 package com.demosoft.life.scene.main;
 
+import com.demosoft.life.imitation.entity.Map;
+import com.demosoft.life.imitation.entity.MapFactory;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
-import com.demosoft.life.imitation.entity.graphic.GraphicMapFactory;
-import com.demosoft.life.imitation.entity.graphic.impl.GraphicMapFactoryImpl;
-import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
-import com.demosoft.life.infra.MapLoader;
+import com.demosoft.life.imitation.entity.graphic.impl.GraphicMapImpl;
+import com.demosoft.life.imitation.entity.v2.impl.MapFactoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,27 +18,24 @@ public class MainSceneConfig {
     public static final int MAP_SIDE = (int) (Math.pow(2, DEGREE) + 1);
 
     @Bean
-    MapLoader mapLoader() {
-        return new MapLoader();
-    }
-
-
-
-    @Bean
-    GraphicMapFactory graphicMapFactory() {
-        return new GraphicMapFactoryImpl();
+    MapFactory mapFactory() {
+        return new MapFactoryImpl();
     }
 
     @Bean
-    GraphicMap map() {
-        GraphicMap map = graphicMapFactory().generateRandomMap(MapFactoryImpl.mapSize);
-        return map;
+    Map map(MapFactory mapFactory) {
+        return mapFactory.generateRandomMap(MapFactoryImpl.mapSize);
     }
 
     @Bean
-    MapRender mapRender() {
+    GraphicMap graphicMap(Map map) {
+        return new GraphicMapImpl(map);
+    }
+
+    @Bean
+    MapRender mapRender(GraphicMap graphicMap) {
         System.out.println("MAP side: " + MAP_SIDE);
-        MapRender mapRender = new MapRender(550, 50, map(), 12, 12);
+        MapRender mapRender = new MapRender(550, 50, graphicMap, 12, 12);
         return mapRender;
 
     }

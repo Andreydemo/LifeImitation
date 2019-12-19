@@ -2,23 +2,18 @@ package com.demosoft.life.imitation.entity.graphic;
 
 
 import com.demosoft.life.imitation.entity.Cell;
+import java.util.Optional;
 
 /**
  * Created by Andrii_Korkoshko on 1/24/2017.
  */
-public interface GraphicCell extends Cell {
+public interface GraphicCell {
 
-    void setGraphicHuman(GraphicHuman human);
+    Cell getCell();
 
-    GraphicHuman getGraphicHuman();
+    Optional<GraphicHuman> getGraphicHuman();
 
-    void setGraphicPlant(GraphicPlant plant);
-
-    GraphicPlant getGraphicPlant();
-
-    void setGraphicLandscape(GraphicLandscape plant);
+    Optional<GraphicPlant> getGraphicPlant();
 
     GraphicLandscape getGraphicLandscape();
-
-
 }

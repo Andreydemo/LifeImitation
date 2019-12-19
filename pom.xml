@@ -8,7 +8,7 @@
     <artifactId>com.demosoft.life</artifactId>
     <version>1.0</version>
     <properties>
-        <gdx.version>1.9.4</gdx.version>
+        <gdx.version>1.9.10</gdx.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -63,6 +63,13 @@
             <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.1-jre</version>
+        </dependency>
+
 
     </dependencies>
     <build>

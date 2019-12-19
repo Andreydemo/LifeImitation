@@ -1,5 +1,6 @@
 package com.demosoft.life.logic.force;
 
+import com.demosoft.life.imitation.entity.Activatable;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.Landscape;
@@ -11,9 +12,11 @@ import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.imitation.entity.v2.impl.CellImpl;
 import com.demosoft.life.imitation.entity.v2.impl.HumanImpl;
 import com.demosoft.life.imitation.entity.v2.impl.MapFactoryImpl;
+import com.demosoft.life.imitation.entity.v2.impl.PlantImpl;
 import com.demosoft.life.logic.random.XRandom;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
+import java.util.Optional;
 import javax.swing.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,8 +46,8 @@ public class ForceV2 {
 
                     for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
                         for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
-                            map.getCellAt(x, y).setActiveFlagHuman(true);
-                            map.getCellAt(x, y).setActiveFlagPlant(true);
+                            map.getCellAt(x, y).getHuman().ifPresent(human -> human.setActive(true));
+                            map.getCellAt(x, y).getPlant().ifPresent(plant -> plant.setActive(true));
                         }
                     }
                     for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
@@ -78,26 +81,26 @@ public class ForceV2 {
     // ACT
     private void act(Cell cellData, int y, int x) {
         Cell cell = map.getCellAt(x, y);
-        if (cell.getActiveFlagHuman() && cell.getHuman().getType() != HumanType.HUMAN_TYPE_EMPTY) {
-            if (tryToDie(cell)
-                    || tryToGiveBirth(cell)
-                    || tryToSleep(cell)
-                    || tryToEat(cell)
-                    || tryToMakeChild(cell)
-                    || tryToMove(cell, 0, 0)) {/*Do nothing*/}
+        if (cell.getHuman().map(Activatable::isActive).orElse(false)) {
+            Human human = cell.getHuman().get();
+            if (tryToDie(cell, human)
+                    || tryToGiveBirth(cell, human)
+                    || tryToSleep(human)
+                    || tryToEat(cell, human)
+                    || tryToMakeChild(cell, human)
+                    || tryToMove(cell, human, 0, 0)) {/*Do nothing*/}
         }
-        if (cell.getActiveFlagPlant() && cell.getPlant().getType() != PlantType.PLANT_TYPE_EMPTY) {
-            tryToMakeFruits(y, x);
-            tryToDropFruit(y, x);
+        if (cell.getPlant().map(Activatable::isActive).orElse(false)) {
+            tryToMakeFruits(y, x, cell.getPlant().get());
+            tryToDropFruit(y, x, cell.getPlant().get());
         }
     }
 
     // HUMAN - DIE
-    private boolean tryToDie(Cell cell) {
-        Human human = cell.getHuman();
+    private boolean tryToDie(Cell cell, Human human) {
         int energy = human.getEnergy();
         if (energy == 0) {
-            clearHuman(human);
+            cell.setHuman(null);
             Statistic.peopleDied++;
             Statistic.peopleDiedByEnergy++;
             infoPanelContainer.getEventsInfoPanel().update(date, "GraphicHuman died by [Low Energy].");
@@ -105,7 +108,7 @@ public class ForceV2 {
         }
         int satiety = human.getSatiety();
         if (satiety == 0) {
-            clearHuman(human);
+            cell.setHuman(null);
             Statistic.peopleDied++;
             Statistic.peopleDiedBySatiety++;
             infoPanelContainer.getEventsInfoPanel().update(date, "GraphicHuman died [Low Satiety].");
@@ -116,7 +119,7 @@ public class ForceV2 {
         // Every year + 2% (since 31 years)
         boolean decision = XRandom.generateBoolean(2 * (human.getAge() / 350) - 60);
         if (decision) {
-            clearHuman(human);
+            cell.setHuman(null);
             Statistic.peopleDied++;
             Statistic.peopleDiedByAge++;
             infoPanelContainer.getEventsInfoPanel().update(date, "GraphicHuman died [Age].");
@@ -126,10 +129,10 @@ public class ForceV2 {
     }
 
     // HUMAN - EAT
-    private boolean tryToEat(Cell cell) {
+    private boolean tryToEat(Cell cell, Human human) {
         // f(x): f(0..10) >= 100, f(60..64) <= 0;
         // f(x) = 120 - 2*x;
-        boolean decision = XRandom.generateBoolean(120 - 2 * cell.getHuman().getSatiety());
+        boolean decision = XRandom.generateBoolean(120 - 2 * human.getSatiety());
         if (decision) {
             int y = cell.getY();
             int x = cell.getX();
@@ -138,21 +141,26 @@ public class ForceV2 {
                     int yTarget = y + yShift;
                     int xTarget = x + xShift;
                     if (isCellInMapRange(yTarget, xTarget)) {
-                        Plant plant = map.getCellAt(xTarget, yTarget).getPlant();
-                        Human human = cell.getHuman();
-                        int fruitsTarget = plant.getFruits();
-                        if (fruitsTarget != 0) {
-                            plant.setFruits(--fruitsTarget);
-                            if (human.getAge() < 10) {
-                                human.setSatiety(human.getSatiety() + 32);
-                            } else {
-                                human.setSatiety(human.getSatiety() + 16);
+                        Optional<Plant> plantOp = map.getCellAt(xTarget, yTarget).getPlant();
+                        if (plantOp.map(plant -> {
+                            int fruitsTarget = plant.getFruits();
+                            if (fruitsTarget != 0) {
+                                plant.setFruits(--fruitsTarget);
+                                if (human.getAge() < 10) {
+                                    human.setSatiety(human.getSatiety() + 32);
+                                } else {
+                                    human.setSatiety(human.getSatiety() + 16);
+                                }
+                                human.setEnergy(human.getEnergy() - 1);
+                                human.setAge(human.getAge() + 1);
+                                human.setActive(false);
+                                return true;
                             }
-                            human.setEnergy(human.getEnergy() - 1);
-                            human.setAge(human.getAge() + 1);
-                            cell.setActiveFlagHuman(false);
+                            return false;
+                        }).orElse(false)) {
                             return true;
                         }
+
                     }
                 }
             }
@@ -161,7 +169,7 @@ public class ForceV2 {
             int xTarget = x;
             for (int yTemp = 0; yTemp < MapFactoryImpl.mapSize; yTemp++) {
                 for (int xTemp = 0; xTemp < MapFactoryImpl.mapSize; xTemp++) {
-                    if (map.getCellAt(xTemp, yTemp).getPlant().getFruits() != 0) {
+                    if (map.getCellAt(xTemp, yTemp).getPlant().isPresent()) {
                         int yDelta = Math.abs(yTemp - y);
                         int xDelta = Math.abs(xTemp - x);
                         int minTemp = yDelta * yDelta + xDelta * xDelta;
@@ -188,52 +196,52 @@ public class ForceV2 {
                 } else if (xDelta > 0) {
                     xShift = 1;
                 }
-                return tryToMove(cell, yShift, xShift);
+                return tryToMove(cell, human, yShift, xShift);
             }
         }
         return false;
     }
 
     // HUMAN - SLEEP
-    private boolean tryToSleep(Cell cell) {
+    private boolean tryToSleep(Human human) {
         // f(x): f(0..10) >= 100, f(60..64) <= 0;
         // f(x) = 120 - 2*x;
-        boolean decision = XRandom.generateBoolean(120 - 2 * cell.getHuman().getEnergy());
+        boolean decision = XRandom.generateBoolean(120 - 2 * human.getEnergy());
         if (decision) {
-            Human human = cell.getHuman();
             human.setEnergy(63);
             human.setSatiety(human.getSatiety() - 1);
             human.setAge(human.getAge() + 1);
-            cell.setActiveFlagHuman(false);
+            human.setActive(false);
             return true;
         }
         return false;
     }
 
     // HUMAN - MAKE CHILD
-    private boolean tryToMakeChild(Cell cell) {
-        Human human = cell.getHuman();
+    private boolean tryToMakeChild(Cell cell, Human human) {
         if (human.getType() == HumanType.HUMAN_TYPE_WOMAN && human.getPregnancy() == 0) {
             for (int yShift = -1; yShift < 2; yShift++) {
                 for (int xShift = -1; xShift < 2; xShift++) {
                     int yTarget = cell.getY() + yShift;
                     int xTarget = cell.getX() + xShift;
                     Cell targetCell = map.getCellAt(xTarget, yTarget);
-                    Human targetHuman = targetCell.getHuman();
+                    Optional<Human> targetHumanOp = targetCell.getHuman();
                     if (isCellInMapRange(yTarget, xTarget)
-                            && targetHuman.getType() == HumanType.HUMAN_TYPE_MAN
-                            && targetCell.getActiveFlagHuman()) {
+                            && targetHumanOp.map(targetHuman1 ->
+                            targetHuman1.getType() == HumanType.HUMAN_TYPE_MAN
+                                    && targetHuman1.isActive()).orElse(false)) {
                         boolean decision = XRandom.generateBoolean(30);
                         if (decision) {
+                            Human targetHuman = targetHumanOp.get();
                             human.setPregnancy(1);
                             human.setEnergy(human.getEnergy() - 4);
                             human.setSatiety(human.getSatiety() - 4);
                             human.setAge(human.getAge() + 1);
-                            cell.setActiveFlagHuman(false);
+                            human.setActive(false);
                             targetHuman.setEnergy(targetHuman.getEnergy() - 4);
                             targetHuman.setSatiety(targetHuman.getSatiety() - 4);
                             targetHuman.setAge(targetHuman.getAge() + 1);
-                            targetCell.setActiveFlagHuman(false);
+                            targetHuman.setActive(false);
                             infoPanelContainer.getEventsInfoPanel().update(date, "Woman got pregnant.");
                             return true;
                         }
@@ -245,8 +253,7 @@ public class ForceV2 {
     }
 
     // HUMAN - GIVE BIRTH
-    private boolean tryToGiveBirth(Cell cell) {
-        Human human = cell.getHuman();
+    private boolean tryToGiveBirth(Cell cell, Human human) {
         int pregnancy = human.getPregnancy();
         if (pregnancy != 0 && pregnancy < 300) {
             human.setPregnancy(human.getPregnancy() + 1);
@@ -255,20 +262,22 @@ public class ForceV2 {
             human.setEnergy(human.getEnergy() - 4);
             human.setSatiety(human.getSatiety() - 4);
             human.setAge(human.getAge() + 1);
-            cell.setActiveFlagHuman(false);
+            human.setActive(false);
             for (int yShift = -1; yShift < 2; yShift++) {
                 for (int xShift = -1; xShift < 2; xShift++) {
                     int yTarget = cell.getY() + yShift;
                     int xTarget = cell.getX() + xShift;
                     Cell targetCell = map.getCellAt(xTarget, yTarget);
-                    Human targetHuman = targetCell.getHuman();
-                    if (isCellInMapRange(yTarget, xTarget) && targetHuman.getType() == HumanType.HUMAN_TYPE_EMPTY) {
+                    Optional<Human> targetHumanOp = targetCell.getHuman();
+                    if (isCellInMapRange(yTarget, xTarget) && !targetHumanOp.isPresent()) {
+                        Human targetHuman = new HumanImpl();
                         targetHuman.setType(XRandom.generateBoolean() ? HumanType.HUMAN_TYPE_MAN : HumanType.HUMAN_TYPE_WOMAN);
                         targetHuman.setAge(301);
                         targetHuman.setEnergy(63);
                         targetHuman.setSatiety(63);
                         targetHuman.setPregnancy(0);
-                        targetCell.setActiveFlagHuman(false);
+                        targetHuman.setActive(false);
+                        targetCell.setHuman(targetHuman);
                         Statistic.childrenWereBorn++;
                         infoPanelContainer.getEventsInfoPanel().update(date, "Child was born.");
                         return true;
@@ -284,7 +293,7 @@ public class ForceV2 {
     }
 
     // HUMAN - MOVE
-    private boolean tryToMove(Cell cell, int yShift, int xShift) {
+    private boolean tryToMove(Cell cell, Human human, int yShift, int xShift) {
         int x = cell.getX();
         int y = cell.getY();
         if (yShift == 0 && xShift == 0) {
@@ -299,49 +308,46 @@ public class ForceV2 {
             int yTarget = y + yShift;
             int xTarget = x + xShift;
             if (!isCellInMapRange(yTarget, xTarget)) {
-                clearHuman(cell.getHuman());
+                cell.setHuman(null);
                 Statistic.peopleDied++;
                 Statistic.peopleDiedByLost++;
                 infoPanelContainer.getEventsInfoPanel().update(date, "GraphicHuman died [Lost].");
                 return true;
             }
             Cell targetCell = map.getCellAt(xTarget, yTarget);
-            Human targetHuman = targetCell.getHuman();
+            Optional<Human> targetHumanOp = targetCell.getHuman();
             Landscape targetLandscape = targetCell.getLandscape();
-            if (targetHuman.getType() == HumanType.HUMAN_TYPE_EMPTY) {
+            if (!targetHumanOp.isPresent()) {
                 moveHuman(y, x, yTarget, xTarget);
                 if (targetLandscape.getType() == LandscapeType.LANDSCAPE_TYPE_WATER_LOW
                         || targetLandscape.getType() == LandscapeType.LANDSCAPE_TYPE_WATER_HIGH) {
-                    targetHuman.setEnergy(targetHuman.getEnergy() - 3);
-                    targetHuman.setSatiety(targetHuman.getSatiety() - 3);
+                    human.setEnergy(human.getEnergy() - 3);
+                    human.setSatiety(human.getSatiety() - 3);
                 } else {
-                    targetHuman.setEnergy(targetHuman.getEnergy() - 2);
-                    targetHuman.setSatiety(targetHuman.getSatiety() - 2);
+                    human.setEnergy(human.getEnergy() - 2);
+                    human.setSatiety(human.getSatiety() - 2);
                 }
-                targetHuman.setAge(targetHuman.getAge() + 1);
-                targetCell.setActiveFlagHuman(false);
+                human.setAge(human.getAge() + 1);
+                human.setActive(false);
                 return true;
             }
         }
-        Human human = cell.getHuman();
         human.setEnergy(human.getEnergy() - 1);
         human.setSatiety(human.getSatiety() - 1);
         human.setAge(human.getAge() + 1);
-        cell.setActiveFlagHuman(false);
+        human.setActive(false);
         return false;
     }
 
     // PLANT - MAKE FRUITS
-    private void tryToMakeFruits(int y, int x) {
+    private void tryToMakeFruits(int y, int x, Plant plant) {
         if (date % 30 == 0) {
-            Plant plant = map.getCellAt(x, y).getPlant();
             plant.setFruits(plant.getFruits() + XRandom.generateInteger(5, 15));
         }
     }
 
     // PLANT - DROP FRUIT
-    private void tryToDropFruit(int y, int x) {
-        Plant plant = map.getCellAt(x, y).getPlant();
+    private void tryToDropFruit(int y, int x, Plant plant) {
         if (plant.getFruits() == 0) {
             return;
         }
@@ -354,13 +360,13 @@ public class ForceV2 {
             Cell targetCell = map.getCellAt(xTarget, yTarget);
             if (isCellInMapRange(yTarget, xTarget) && (yTarget != y || xTarget != x)) {
                 LandscapeType landscapeTarget = targetCell.getLandscape().getType();
-                HumanType humanTarget = targetCell.getHuman().getType();
-                PlantType plantTarget = targetCell.getPlant().getType();
+                Optional<Human> humanTarget = targetCell.getHuman();
+                Optional<Plant> plantTarget = targetCell.getPlant();
                 if (landscapeTarget != LandscapeType.LANDSCAPE_TYPE_WATER_LOW
                         && landscapeTarget != LandscapeType.LANDSCAPE_TYPE_WATER_HIGH
-                        && humanTarget == HumanType.HUMAN_TYPE_EMPTY
-                        && plantTarget == PlantType.PLANT_TYPE_EMPTY && canMove(targetCell)) {
-                    targetCell.getPlant().setType(PlantType.PLANT_TYPE_APPLE);
+                        && !humanTarget.isPresent()
+                        && !plantTarget.isPresent() && canMove(targetCell)) {
+                    targetCell.setPlant(new PlantImpl(PlantType.PLANT_TYPE_APPLE, 0, false));
                 }
             }
         }
@@ -368,18 +374,11 @@ public class ForceV2 {
 
     private void moveHuman(int yFrom, int xFrom, int yTo, int xTo) {
         Cell cellFrom = map.getCellAt(xFrom, yFrom);
-        Human humanFrom = cellFrom.getHuman();
+        Human humanFrom = cellFrom.getHuman().get();
         map.getCellAt(xTo, yTo).setHuman(humanFrom);
-        cellFrom.setHuman(new HumanImpl(cellFrom));
+        cellFrom.setHuman(null);
     }
 
-    private void clearHuman(Human human) {
-        human.setType(HumanType.HUMAN_TYPE_EMPTY);
-        human.setAge(0);
-        human.setEnergy(0);
-        human.setSatiety(0);
-        human.setPregnancy(0);
-    }
 
     private boolean isCellInMapRange(int y, int x) {
         return y >= 0 && y < MapFactoryImpl.mapSize && x >= 0 && x < MapFactoryImpl.mapSize;

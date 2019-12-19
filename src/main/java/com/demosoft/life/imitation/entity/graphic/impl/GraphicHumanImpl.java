@@ -2,71 +2,26 @@ package com.demosoft.life.imitation.entity.graphic.impl;
 
 import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.graphic.GraphicHuman;
-import com.demosoft.life.imitation.entity.type.HumanType;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
 public class GraphicHumanImpl implements GraphicHuman {
-    private Human baseHuman;
+    private Human human;
 
-    public GraphicHumanImpl(Human baseHuman) {
-        this.baseHuman = baseHuman;
+    public GraphicHumanImpl(Human human) {
+        this.human = human;
     }
 
-    @Override
-    public int getAge() {
-        return baseHuman.getAge();
-    }
 
     @Override
-    public int getEnergy() {
-        return baseHuman.getEnergy();
-    }
-
-    @Override
-    public HumanType getType() {
-        return baseHuman.getType();
-    }
-
-    @Override
-    public int getPregnancy() {
-        return baseHuman.getPregnancy();
-    }
-
-    @Override
-    public int getSatiety() {
-        return baseHuman.getSatiety();
-    }
-
-    @Override
-    public void setAge(int age) {
-        baseHuman.setAge(age);
-    }
-
-    @Override
-    public void setEnergy(int energy) {
-        baseHuman.setEnergy(energy);
-    }
-
-    @Override
-    public void setType(HumanType humanType) {
-        baseHuman.setType(humanType);
-    }
-
-    @Override
-    public void setPregnancy(int pregnancy) {
-        baseHuman.setPregnancy(pregnancy);
-    }
-
-    @Override
-    public void setSatiety(int satiety) {
-        baseHuman.setSatiety(satiety);
+    public Human getHuman() {
+        return this.human;
     }
 
     @Override
     public String getMessage() {
-        return getType().getMessage();
+        return  this.human.getType().getMessage();
     }
 
     @Override
@@ -76,7 +31,7 @@ public class GraphicHumanImpl implements GraphicHuman {
 
     @Override
     public int getColor() {
-        return getType().getColor();
+        return this.human.getType().getColor();
     }
 
     @Override

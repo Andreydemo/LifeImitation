@@ -3,9 +3,10 @@ package com.demosoft.life.logic.statistic;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.impl.MapFactoryImpl;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.PlantType;
+import com.demosoft.life.imitation.entity.v2.impl.MapFactoryImpl;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -73,8 +74,9 @@ public class Statistic {
         for (int y = 0; y < MapFactoryImpl.mapSize; y++) {
             for (int x = 0; x < MapFactoryImpl.mapSize; x++) {
                 Cell cell = map.getCellAt(x,y);
-                Human human = cell.getHuman();
-                if (human.getType() != HumanType.HUMAN_TYPE_EMPTY) {
+                Optional<Human> humanOptional = cell.getHuman();
+                if (humanOptional.isPresent()) {
+                    Human human = humanOptional.get();
                     peopleTemp++;
                     peopleAgeTemp += human.getAge();
                     if (human.getType() == HumanType.HUMAN_TYPE_MAN) {
@@ -86,9 +88,9 @@ public class Statistic {
                         }
                     }
                 }
-                if (cell.getPlant().getType() != PlantType.PLANT_TYPE_EMPTY) {
+                if (cell.getPlant().isPresent()) {
                     plantsTemp++;
-                    plantsFruitsTemp += cell.getPlant().getFruits();
+                    plantsFruitsTemp += cell.getPlant().get().getFruits();
                 }
             }
         }

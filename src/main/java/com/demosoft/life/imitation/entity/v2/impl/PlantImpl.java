@@ -4,23 +4,19 @@ import static com.demosoft.life.imitation.entity.type.PlantType.PLANT_TYPE_EMPTY
 
 import com.demosoft.life.imitation.entity.Plant;
 import com.demosoft.life.imitation.entity.type.PlantType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
 @Data
-@ToString(exclude = "cell")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlantImpl implements Plant {
-
-    private CellImpl cell;
 
     PlantType type = PLANT_TYPE_EMPTY;
     int fruits;
-
-    public PlantImpl(CellImpl cell) {
-        this.cell = cell;
-    }
-
+    boolean active;
 }

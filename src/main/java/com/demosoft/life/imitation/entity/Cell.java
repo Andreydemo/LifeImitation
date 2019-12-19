@@ -1,14 +1,12 @@
 package com.demosoft.life.imitation.entity;
 
+import java.util.Optional;
+
 /**
  * Created by Andrii_Korkoshko on 1/24/2017.
  */
 public interface Cell {
 
-    /*  long getValue();
-
-      void setValue(long Value);
-  */
     int getY();
 
     void setY(int y);
@@ -19,22 +17,14 @@ public interface Cell {
 
     void setHuman(Human human);
 
-    Human getHuman();
+    Optional<Human> getHuman();
 
     void setPlant(Plant plant);
 
-    Plant getPlant();
+    Optional<Plant> getPlant();
 
     void setLandscape(Landscape plant);
 
     Landscape getLandscape();
-
-    void setActiveFlagHuman(Boolean activeFlagHuman);
-
-    Boolean getActiveFlagHuman();
-
-    void setActiveFlagPlant(Boolean activeFlagPlant);
-
-    Boolean getActiveFlagPlant();
 
 }

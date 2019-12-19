@@ -3,7 +3,8 @@ package com.demosoft.life.scene.main.info;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.demosoft.life.assets.AssetsLoader;
-import com.demosoft.life.imitation.entity.Human;
+import com.demosoft.life.imitation.entity.Cell;
+import com.demosoft.life.imitation.entity.Landscape;
 import com.demosoft.life.imitation.entity.graphic.*;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
@@ -50,41 +51,33 @@ public class CellInfoPanel {
     }
 
     public void update(int x, int y) {
-        GraphicCell cell = map.getCellAt(x, y);
-        GraphicLandscape graphicLandscape = cell.getGraphicLandscape();
-        Human graphicHuman = cell.getHuman();
-        GraphicPlant graphicPlant = cell.getGraphicPlant();
-        String info = String.format(
-                "LandscapeType type as string: %s"
-                        + "\n LandscapeType type: %s"
-                        + "\n "
-                        + "\n x : %s; y : %s"
-                        + "\n GraphicHuman type: %s"
-                        + "\n GraphicHuman age: %s"
-                        + "\n GraphicHuman energy: %s"
-                        + "\n GraphicHuman satiety: %s"
-                        + "\n GraphicHuman pregnancy: %s"
-                        + "\n "
-                        + "\n PlantType type: %s"
-                        + "\n PlantType name: %s"
-                        + "\n PlantType fruits: %s"
-                        + "\n "
-                        + "\n Active flag (GraphicHuman): %s"
-                        + "\n Active flag (PlantType): %s",
-                graphicLandscape.getMessage(),
-                graphicLandscape.getType().getValue(),
-                x, y,
-                graphicHuman.getType().getValue(),
-                XFormatter.formatDate(graphicHuman.getAge()),
-                graphicHuman.getEnergy(),
-                graphicHuman.getSatiety(),
-                XFormatter.formatDate(graphicHuman.getPregnancy()),
-                graphicPlant.getType().getValue(),
-                graphicPlant.getMessage(),
-                graphicPlant.getFruits(),
-                cell.getActiveFlagHuman(),
-                cell.getActiveFlagPlant());
-        baseElement.setText(info);
+        GraphicCell gCell = map.getCellAt(x, y);
+        Cell cell = gCell.getCell();
+        GraphicLandscape graphicLandscape = gCell.getGraphicLandscape();
+        Landscape landscape = graphicLandscape.getLandscape();
+
+        StringBuilder result = new StringBuilder()
+                .append("LandscapeType type as string: ").append(graphicLandscape.getMessage())
+                .append("\nLandscapeType type: ").append(landscape.getType())
+                .append("\nx : ").append(x)
+                .append("; y : ").append(y);
+
+        cell.getHuman().ifPresent(human -> {
+            result.append("\nHuman type: ").append(human.getType())
+                    .append("\nHuman active: ").append(human.isActive())
+                    .append("\nHuman age: ").append(XFormatter.formatDate(human.getAge()))
+                    .append("\nHuman energy: ").append(human.getEnergy())
+                    .append("\nHuman satiety: ").append(human.getSatiety())
+                    .append("\nHuman pregnancy: ").append(XFormatter.formatDate(human.getPregnancy()));
+        });
+        cell.getPlant().ifPresent(plant -> {
+            result.append("\nPlant type: ").append(plant.getType())
+                    .append("\nPlant active: ").append(plant.isActive())
+                    .append("\nPlant name: ").append(plant.getType().getMessage())
+                    .append("\nPlant fruits: ").append(plant.getFruits());
+        });
+
+        baseElement.setText(result.toString());
     }
 
     public void reset() {

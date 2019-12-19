@@ -5,7 +5,7 @@ import com.demosoft.life.imitation.entity.type.HumanType;
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
-public interface Human {
+public interface Human extends Activatable {
 
     void setType(HumanType humanType);
 
@@ -26,4 +26,5 @@ public interface Human {
     void setPregnancy(int pregnancy);
 
     int getPregnancy();
+
 }
