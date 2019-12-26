@@ -53,6 +53,7 @@ public class MiniMapPanel {
     public void toggle() {
         showed = !showed;
         if (showed) {
+            map.generateMiniMap();
             Image actor = new Image(map.getMiniMap());
             Utils.foolowToCamera(actor, minMapCamera);
             stage.addActor(actor);

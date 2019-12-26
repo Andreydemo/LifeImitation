@@ -181,8 +181,7 @@ public class ControlPanel {
                 map.reCreate(mapSize);
                 System.out.println("Map recreated :" + (System.currentTimeMillis() - time));
                 time = System.currentTimeMillis();
-                mapFactory.generateLandscape(map).join();
-                graphicMap.generateMiniMap();
+                mapFactory.generateLandscape(map);
                 System.out.println("Map generated :" + (System.currentTimeMillis() - time));
             }
         });
