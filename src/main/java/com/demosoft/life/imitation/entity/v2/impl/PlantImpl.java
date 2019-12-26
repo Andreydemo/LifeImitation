@@ -19,4 +19,11 @@ public class PlantImpl implements Plant {
     PlantType type = PLANT_TYPE_EMPTY;
     int fruits;
     boolean active;
+
+    public void setFruits(int fruits) {
+        this.fruits = fruits;
+        if (this.fruits > 63) {
+            this.fruits = 63;
+        }
+    }
 }

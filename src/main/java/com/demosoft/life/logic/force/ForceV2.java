@@ -1,26 +1,21 @@
 package com.demosoft.life.logic.force;
 
-import com.demosoft.life.imitation.entity.Activatable;
-import com.demosoft.life.imitation.entity.Cell;
-import com.demosoft.life.imitation.entity.Human;
-import com.demosoft.life.imitation.entity.Landscape;
-import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.Plant;
+import com.demosoft.life.imitation.entity.*;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.LandscapeType;
 import com.demosoft.life.imitation.entity.type.PlantType;
-import com.demosoft.life.imitation.entity.v2.impl.CellImpl;
 import com.demosoft.life.imitation.entity.v2.impl.HumanImpl;
 import com.demosoft.life.imitation.entity.v2.impl.MapFactoryImpl;
 import com.demosoft.life.imitation.entity.v2.impl.PlantImpl;
 import com.demosoft.life.logic.random.XRandom;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by Andrii_Korkoshko on 2/10/2017.
@@ -77,7 +72,7 @@ public class ForceV2 {
             public void run() {
                 mainTask.run();
             }
-        } , 0, timerDelay);
+        }, 0, timerDelay);
     }
 
     public void applySpeed() {
@@ -113,13 +108,14 @@ public class ForceV2 {
             public void run() {
                 mainTask.run();
             }
-        } , 0, timerDelay);
+        }, 0, timerDelay);
     }
 
     public void pause() {
         if (timer != null) {
             timer.cancel();
             timer.purge();
+            timer = null;
             running = false;
         }
     }
@@ -128,6 +124,7 @@ public class ForceV2 {
         if (timer != null) {
             timer.cancel();
             timer.purge();
+            timer = null;
             running = false;
         }
         date = 1;
@@ -143,12 +140,18 @@ public class ForceV2 {
                     || tryToSleep(human)
                     || tryToEat(cell, human)
                     || tryToMakeChild(cell, human)
+                    || tryToCutTree(cell, human)
                     || tryToMove(cell, human, 0, 0)) {/*Do nothing*/}
         }
         if (cell.getPlant().map(Activatable::isActive).orElse(false)) {
             tryToMakeFruits(y, x, cell.getPlant().get());
             tryToDropFruit(y, x, cell.getPlant().get());
         }
+    }
+
+    private boolean tryToCutTree(Cell cell, Human human) {
+
+        return false;
     }
 
     // HUMAN - DIE
@@ -357,7 +360,8 @@ public class ForceV2 {
                 yShift = XRandom.generateInteger(-1, 1);
                 xShift = XRandom.generateInteger(-1, 1);
                 tryCount--;
-            } while (tryCount > 0 || !isCellInMapRange(x + xShift, y + yShift) || !canMove(map.getCellAt(x + xShift, y + yShift)));
+            }
+            while (tryCount > 0 || !isCellInMapRange(x + xShift, y + yShift) || !canMove(map.getCellAt(x + xShift, y + yShift)));
         }
         if (yShift != 0 || xShift != 0) {
             int yTarget = y + yShift;
