@@ -1,6 +1,8 @@
 package com.demosoft.life.scene.main;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,6 +19,7 @@ import com.demosoft.life.spring.ContextContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Created by Andrii_Korkoshko on 1/24/2017.
@@ -44,8 +47,12 @@ public class MapRender {
     @Autowired
     private InfoPanelContainer infoPanelContainer;
 
-    private int bufRadius = 30;
-    private int baseBufRadius = 30;
+    @Autowired
+    @Qualifier("camera")
+    private OrthographicCamera camera;
+
+    private int bufRadius = 40;
+    private int baseBufRadius = 40;
 
     public MapRender(float mapPositionX, float mapPositionY, GraphicMap map, int cellWidth, int cellHeight) {
         this.mapPositionY = mapPositionY;
@@ -140,6 +147,7 @@ public class MapRender {
     }
 
     private void drawBorder() {
+        if(camera.zoom > 3.5) return;
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
 

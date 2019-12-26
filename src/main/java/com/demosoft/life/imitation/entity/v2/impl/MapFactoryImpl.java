@@ -4,6 +4,7 @@ import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MA
 import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX_VALUE;
 import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MIN;
 
+import com.badlogic.gdx.Gdx;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Human;
 import com.demosoft.life.imitation.entity.Landscape;
@@ -16,6 +17,8 @@ import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.logic.random.XRandom;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import org.lwjgl.opengl.GLContext;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
@@ -99,7 +102,7 @@ public class MapFactoryImpl implements MapFactory {
     }
 
     @Override
-    public void generateLandscape(Map map) {
+    public CompletableFuture<Void> generateLandscape(Map map) {
         System.out.println("MapFactoryImpl map start generateLandscape");
         MapImpl mapImpl = (MapImpl) map;
 
@@ -110,25 +113,22 @@ public class MapFactoryImpl implements MapFactory {
         final float[] landscapeShift = {20};
         final double[] prcent = {0};
         int log = Integer.numberOfLeadingZeros(mapImpl.getSize() - 1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int bigStep = mapImpl.getSize() - 1; bigStep >= 2; bigStep /= 2, landscapeShift[0] /= 2.0f) {
-                    int smallStep = bigStep / 2;
-                    //diamond step
-                    double newPercent = getPercent(log, bigStep);
-                    if (prcent[0] != newPercent) {
-                        System.out.print("Gen: " + newPercent + "% ");
-                        prcent[0] = newPercent;
-                    }
-                    diamondStep(mapImpl, landscapeShift[0], bigStep, smallStep);
-                    //square step
-                    squareStep(mapImpl, landscapeShift[0], bigStep, smallStep);
-                }
-                System.out.println("MapFactoryImpl map end generateLandscape");
-            }
-        }).start();
 
+        return CompletableFuture.runAsync(() -> {
+            for (int bigStep = mapImpl.getSize() - 1; bigStep >= 2; bigStep /= 2, landscapeShift[0] /= 2.0f) {
+                int smallStep = bigStep / 2;
+                //diamond step
+                double newPercent = getPercent(log, bigStep);
+                if (prcent[0] != newPercent) {
+                    System.out.print("Gen: " + newPercent + "% ");
+                    prcent[0] = newPercent;
+                }
+                diamondStep(mapImpl, landscapeShift[0], bigStep, smallStep);
+                //square step
+                squareStep(mapImpl, landscapeShift[0], bigStep, smallStep);
+            }
+            System.out.println("MapFactoryImpl map end generateLandscape");
+        });
     }
 
     private double getPercent(int log, int bigStep) {

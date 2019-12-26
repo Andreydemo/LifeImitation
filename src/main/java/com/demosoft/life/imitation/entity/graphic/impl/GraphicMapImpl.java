@@ -7,10 +7,13 @@ import com.demosoft.life.imitation.entity.MapFactory;
 import com.demosoft.life.imitation.entity.graphic.GraphicCell;
 import com.demosoft.life.imitation.entity.graphic.GraphicMap;
 import com.demosoft.life.imitation.entity.v2.impl.MapImpl;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
  */
+@Log
 public class GraphicMapImpl implements GraphicMap {
 
     private Map map;
@@ -51,6 +54,9 @@ public class GraphicMapImpl implements GraphicMap {
     }
 
     public Texture getMiniMap() {
+        if (miniMap == null) {
+            this.generateMiniMap();
+        }
         return miniMap;
     }
 
@@ -66,6 +72,7 @@ public class GraphicMapImpl implements GraphicMap {
                 pixmap.drawPixel(x, y, getCellAt(x, y).getGraphicLandscape().getColor());
             }
         }
+        log.info("mini map generated");
         miniMap = new Texture(pixmap);
     }
 }

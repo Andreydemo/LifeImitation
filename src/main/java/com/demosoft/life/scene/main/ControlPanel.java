@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Map;
 import com.demosoft.life.imitation.entity.MapFactory;
+import com.demosoft.life.imitation.entity.graphic.GraphicMap;
 import com.demosoft.life.logic.force.ForceV2;
 import com.demosoft.life.logic.statistic.Statistic;
 import com.demosoft.life.scene.main.info.InfoPanelContainer;
@@ -61,6 +62,8 @@ public class ControlPanel {
 
     @Autowired
     private Map map;
+    @Autowired
+    private GraphicMap graphicMap;
 
     @Autowired
     private MapFactory mapFactory;
@@ -178,7 +181,8 @@ public class ControlPanel {
                 map.reCreate(mapSize);
                 System.out.println("Map recreated :" + (System.currentTimeMillis() - time));
                 time = System.currentTimeMillis();
-                mapFactory.generateLandscape(map);
+                mapFactory.generateLandscape(map).join();
+                graphicMap.generateMiniMap();
                 System.out.println("Map generated :" + (System.currentTimeMillis() - time));
             }
         });

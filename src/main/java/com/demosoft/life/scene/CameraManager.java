@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 public class CameraManager {
 
@@ -27,8 +25,8 @@ public class CameraManager {
     private MiniMapPanel miniMapPanel;
 
     private Vector2 camermove = new Vector2();
-    public static final float maxZoom = 0.123f;
-    public static final float minZoom = 10f;
+    public static final float maxZoom = 0.060f;
+    public static final float minZoom = 20f;
     public static final float zoomStep = 1.05f;
     private boolean flipped = false;
 
@@ -55,22 +53,26 @@ public class CameraManager {
     }
 
     public void moveTop() {
-        camera.translate(0, 6);
+        camera.translate(0, 6 * getZoomMoveIndex());
         mapRender.calculateFocusedPosition();
     }
 
+    private int getZoomMoveIndex() {
+        return ((int) camera.zoom) == 0 ? 1 : ((int) camera.zoom);
+    }
+
     public void moveDown() {
-        camera.translate(0, -6);
+        camera.translate(0, -6 * (getZoomMoveIndex()));
         mapRender.calculateFocusedPosition();
     }
 
     public void moveRight() {
-        camera.translate(6, 0);
+        camera.translate(6 * (getZoomMoveIndex()), 0);
         mapRender.calculateFocusedPosition();
     }
 
     public void moveLeft() {
-        camera.translate(-6, 0);
+        camera.translate(-6 * (getZoomMoveIndex()), 0);
         mapRender.calculateFocusedPosition();
     }
 

@@ -68,7 +68,7 @@ public class MapInfoPanel {
                         + "\n Plants Fruits: %s"
                         + "\n Plants Density (Land): %.2f"
                         + "\n Plants Fruits Mean: %.2f"
-                        + "\n Plants Fruits / People Ratio: %.2f",
+                        + "\n Plants Fruits / People Ratio: %.2f\n",
                 XFormatter.formatDateShort(days),
                 Statistic.CELLS,
                 Statistic.CELLS_WATER,

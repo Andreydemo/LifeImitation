@@ -1,6 +1,7 @@
 package com.demosoft.life.imitation.entity;
 
 import com.demosoft.life.imitation.entity.type.LandscapeType;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
@@ -11,7 +12,7 @@ public interface MapFactory {
 
     Map generateRandomMap(int size);
 
-    void generateLandscape(Map map);
+    CompletableFuture<Void> generateLandscape(Map map);
 
     Cell createCell();
 
