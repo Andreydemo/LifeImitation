@@ -133,11 +133,17 @@ public class MapRender {
         for (int x = 0; x < map.getSize(); x++) {
             for (int y = 0; y < map.getSize(); y++) {
                 if (inRenderingZone(x, y)) {
-                    Optional<Integer> foregroundColor = getForegroundColor(graphicMap.getCellAt(x, y));
-                    if (foregroundColor.isPresent()) {
-                        shapeRenderer.setColor(new Color(foregroundColor.get()));
+                    Cell cell = graphicMap.getCellAt(x, y).getCell();
+
+                    Optional<Plant> plant = cell.getPlant();
+                    if (cell.getHuman().isPresent()) {
+                        shapeRenderer.setColor(new Color(cell.getHuman().get().getType().getColor()));
                         shapeRenderer.rect(getWorldX(x * cellWidth + 2), contextContainer.translateY(getWorldY(y * cellHeight)) + 3,
                                 cellWidth - 5, cellHeight - 5);
+                    } else if (plant.isPresent()) {
+                        shapeRenderer.setColor(new Color(plant.get().getType().getColor()));
+                        shapeRenderer.circle(getWorldX(x * cellWidth + 6), contextContainer.translateY(getWorldY(y * cellHeight)) + 6,
+                                cellWidth - 7);
                     }
                 }
 
@@ -147,7 +153,7 @@ public class MapRender {
     }
 
     private void drawBorder() {
-        if(camera.zoom > 3.5) return;
+        if(camera.zoom > 1.5) return;
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
 
