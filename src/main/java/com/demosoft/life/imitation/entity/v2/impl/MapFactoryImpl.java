@@ -1,24 +1,18 @@
 package com.demosoft.life.imitation.entity.v2.impl;
 
-import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX;
-import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX_VALUE;
-import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MIN;
-
-import com.badlogic.gdx.Gdx;
-import com.demosoft.life.imitation.entity.Cell;
-import com.demosoft.life.imitation.entity.Human;
-import com.demosoft.life.imitation.entity.Landscape;
-import com.demosoft.life.imitation.entity.Map;
-import com.demosoft.life.imitation.entity.MapFactory;
-import com.demosoft.life.imitation.entity.Plant;
+import com.demosoft.life.imitation.entity.*;
 import com.demosoft.life.imitation.entity.type.HumanType;
 import com.demosoft.life.imitation.entity.type.LandscapeType;
 import com.demosoft.life.imitation.entity.type.PlantType;
 import com.demosoft.life.logic.random.XRandom;
+
+import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import org.lwjgl.opengl.GLContext;
+
+import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MAX;
+import static com.demosoft.life.imitation.entity.type.LandscapeType.LANDSCAPE_MIN;
 
 /**
  * Created by Andrii_Korkoshko on 2/15/2017.
@@ -275,7 +269,7 @@ public class MapFactoryImpl implements MapFactory {
                 long topRightValue = map.getCellAt(x + smallStep, y - smallStep).getLandscape().getHeight();
                 long bottomLeftValue = map.getCellAt(x - smallStep, y + smallStep).getLandscape().getHeight();
                 long bottomRightValue = map.getCellAt(x + smallStep, y + smallStep).getLandscape().getHeight();
-                float average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4;
+                double average = (topLeftValue + topRightValue + bottomLeftValue + bottomRightValue) / 4d;
                 int centralValue = (int) (average + random.nextInt(3) * landscapeShift
                         - landscapeShift); // -landscapeShift 0 landscapeShift
                 int landscapeType = getValueInRange(centralValue);
@@ -287,13 +281,13 @@ public class MapFactoryImpl implements MapFactory {
     private void squareStep(Map map, float landscapeShift, int bigStep, int smallStep) {
         for (int x = 0; x < map.getSize(); x += smallStep) {
             for (int y = (x + smallStep) % bigStep; y < map.getSize(); y += bigStep) {
-                long topValue = map.getCellAt((y - smallStep + map.getSize() - 1) % (map.getSize() - 1), x).getLandscape()
+                long topValue = map.getCellAt((x - smallStep + map.getSize() - 1) % (map.getSize() - 1), y).getLandscape()
                         .getHeight();
-                long leftValue = map.getCellAt(y, (x - smallStep + map.getSize() - 1) % (map.getSize() - 1)).getLandscape()
+                long leftValue = map.getCellAt(x, (y - smallStep + map.getSize() - 1) % (map.getSize() - 1)).getLandscape()
                         .getHeight();
-                long rightValue = map.getCellAt(y, (x + smallStep) % (map.getSize() - 1)).getLandscape().getHeight();
-                long bottomValue = map.getCellAt((y + smallStep) % (map.getSize() - 1), x).getLandscape().getHeight();
-                float avg = (topValue + leftValue + rightValue + bottomValue) / 4;
+                long rightValue = map.getCellAt(x, (y + smallStep) % (map.getSize() - 1)).getLandscape().getHeight();
+                long bottomValue = map.getCellAt((x + smallStep) % (map.getSize() - 1), y).getLandscape().getHeight();
+                double avg = (topValue + leftValue + rightValue + bottomValue) / 4d;
                 int centerValue = getValueInRange((int) (avg + this.random.nextInt(3) * landscapeShift - landscapeShift)
                 );
                 map.setCell(createCell(LandscapeType.getByValue(centerValue), x, y));
