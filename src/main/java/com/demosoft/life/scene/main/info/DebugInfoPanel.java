@@ -5,6 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.demosoft.life.assets.AssetsLoader;
+import com.demosoft.life.scene.base.CornerLink;
+import com.demosoft.life.scene.base.MoveDragListener;
+import com.demosoft.life.scene.base.ResizeDragListener;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.scene.main.MapRender;
 import com.demosoft.life.spring.ContextContainer;
@@ -36,8 +39,14 @@ public class DebugInfoPanel {
         baseElement.setBounds(1350, context.translateY(835), 500, 250);
         baseElement.setDisabled(true);
 
+
         label = new Label("Debug Info", skin);
         label.setBounds(1350, context.translateY(585), 300, 25);
+
+        baseElement.setName("text");
+        label.setName("label");
+        baseElement.addListener(new MoveDragListener(baseElement, label));
+        baseElement.addListener(new ResizeDragListener(baseElement, new CornerLink(label, CornerLink.Corner.UP_X_DOWN_Y)));
     }
 
     public void update() {

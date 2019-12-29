@@ -5,6 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.demosoft.life.assets.AssetsLoader;
+import com.demosoft.life.scene.base.CornerLink;
+import com.demosoft.life.scene.base.MoveDragListener;
+import com.demosoft.life.scene.base.ResizeDragListener;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.spring.ContextContainer;
@@ -48,6 +51,12 @@ public class EventsInfoPanel {
         maxItemOnView = (int) (baseElement.getHeight() / baseElement.getItemHeight());
         label = new Label("Events Info", skin);
         label.setBounds(25, context.translateY(485), 300, 25);
+
+        baseElement.setName("text");
+        scrollElement.setName("scrollElement");
+        label.setName("label");
+        baseElement.addListener(new MoveDragListener(scrollElement, label));
+        baseElement.addListener(new ResizeDragListener(scrollElement, new CornerLink(label, CornerLink.Corner.UP_X_DOWN_Y)));
 
     }
 

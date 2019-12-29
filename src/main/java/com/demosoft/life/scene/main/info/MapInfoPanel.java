@@ -6,6 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.logic.statistic.Statistic;
+import com.demosoft.life.scene.base.CornerLink;
+import com.demosoft.life.scene.base.MoveDragListener;
+import com.demosoft.life.scene.base.ResizeDragListener;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.spring.ContextContainer;
@@ -39,6 +42,11 @@ public class MapInfoPanel {
 
         label = new Label("MapImpl Info", skin);
         label.setBounds(25, context.translateY(35), 300, 25);
+
+        baseElement.setName("text");
+        label.setName("label");
+        baseElement.addListener(new MoveDragListener(baseElement, label));
+        baseElement.addListener(new ResizeDragListener(baseElement, new CornerLink(label, CornerLink.Corner.UP_X_DOWN_Y)));
     }
 
     public void reset() {
