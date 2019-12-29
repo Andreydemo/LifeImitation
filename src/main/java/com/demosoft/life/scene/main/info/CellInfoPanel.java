@@ -6,6 +6,7 @@ import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Landscape;
 import com.demosoft.life.imitation.entity.graphic.*;
+import com.demosoft.life.scene.base.CornerLink;
 import com.demosoft.life.scene.base.MoveDragListener;
 import com.demosoft.life.scene.base.ResizeDragListener;
 import com.demosoft.life.scene.format.XFormatter;
@@ -48,7 +49,7 @@ public class CellInfoPanel {
         label.setBounds(1350, context.translateY(35), 300, 25);
         label.setName("label");
         baseElement.addListener(new MoveDragListener(baseElement, label));
-        baseElement.addListener(new ResizeDragListener(baseElement));
+        baseElement.addListener(new ResizeDragListener(baseElement, new CornerLink(label, CornerLink.Corner.UP_X_DOWN_Y)));
     }
 
     public void addToStage(Stage stage) {

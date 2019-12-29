@@ -5,8 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ResizeDragListener extends DragListener {
@@ -18,9 +18,15 @@ public class ResizeDragListener extends DragListener {
     private boolean startedXDown = false;
     private boolean startedYUp = false;
     private boolean startedYDown = false;
+    private Map<CornerLink.Corner, List<CornerLink>> linkedActors;
+    private CornerLink[] cornerLinks;
 
-    public ResizeDragListener(Actor actor) {
+    public ResizeDragListener(Actor actor, CornerLink... cornerLinks) {
         this.mainActor = actor;
+        this.cornerLinks = cornerLinks;
+        if (cornerLinks != null) {
+            linkedActors = Arrays.stream(cornerLinks).collect(Collectors.groupingBy(CornerLink::getCorner));
+        }
     }
 
     @Override
@@ -54,6 +60,13 @@ public class ResizeDragListener extends DragListener {
             startPosition.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
             startedYDown = true;
         }
+
+        if(cornerLinks != null){
+            for (CornerLink cornerLink : cornerLinks) {
+                Actor actor = cornerLink.getActor();
+                startPosition.put(actor.getName(), new Point(actor.getX(), actor.getY()));
+            }
+        }
         return b;
     }
 
@@ -75,6 +88,12 @@ public class ResizeDragListener extends DragListener {
             log.info("touchDragged XUp {} {} {} {}", event, x, y, pointer);
             mainActor.setWidth(getWidthDiffUp(event, mainActor));
             mainActor.setX(getXDiff(event, mainActor));
+            if(linkedActors != null){
+                List<CornerLink> downY = linkedActors.getOrDefault(CornerLink.Corner.UP_X_DOWN_Y, Collections.emptyList());
+                List<CornerLink> upY = linkedActors.getOrDefault(CornerLink.Corner.UP_X_UP_Y, Collections.emptyList());
+                downY.forEach(cornerLink -> cornerLink.getActor().setX(getXDiff(event, cornerLink.getActor())));
+                upY.forEach(cornerLink -> cornerLink.getActor().setX(getXDiff(event, cornerLink.getActor())));
+            }
         }
 
         if (y < (mainActor.getHeight() * 0.1) && startedYUp) {
@@ -91,6 +110,12 @@ public class ResizeDragListener extends DragListener {
         if (y > (mainActor.getHeight() * 0.9) && startedYDown) {
             log.info("touchDragged YDown {} {} {} {}", event, x, y, pointer);
             mainActor.setHeight(getHeightDiffDown(event, mainActor));
+            if(linkedActors != null){
+                List<CornerLink> upX = linkedActors.getOrDefault(CornerLink.Corner.UP_X_DOWN_Y, Collections.emptyList());
+                List<CornerLink> downX = linkedActors.getOrDefault(CornerLink.Corner.DOWN_X_DOWN_Y, Collections.emptyList());
+                upX.forEach(cornerLink -> cornerLink.getActor().setY(getYDiff(event, cornerLink.getActor())));
+                downX.forEach(cornerLink -> cornerLink.getActor().setY(getYDiff(event, cornerLink.getActor())));
+            }
         }
 
     }
@@ -98,6 +123,7 @@ public class ResizeDragListener extends DragListener {
     private float getHeightDiffDown(InputEvent event, Actor actor) {
         return startSize.get(actor.getName()).getY() - (getStageTouchDownY() - event.getStageY());
     }
+
     private float getHeightDiffUp(InputEvent event, Actor actor) {
         return startSize.get(actor.getName()).getY() + (getStageTouchDownY() - event.getStageY());
     }
@@ -105,6 +131,7 @@ public class ResizeDragListener extends DragListener {
     private float getWidthDiffDown(InputEvent event, Actor actor) {
         return startSize.get(actor.getName()).getX() - (getStageTouchDownX() - event.getStageX());
     }
+
     private float getWidthDiffUp(InputEvent event, Actor actor) {
         return startSize.get(actor.getName()).getX() + (getStageTouchDownX() - event.getStageX());
     }
@@ -116,7 +143,6 @@ public class ResizeDragListener extends DragListener {
     private float getXDiff(InputEvent event, Actor actor) {
         return startPosition.get(actor.getName()).getX() - (getStageTouchDownX() - event.getStageX());
     }
-
 
 
 }
