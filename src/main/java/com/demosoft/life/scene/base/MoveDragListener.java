@@ -23,10 +23,10 @@ public class MoveDragListener extends DragListener {
 
     @Override
     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        log.info("touchDown {} {} {} {} {}", event, x, y, pointer, button);
         boolean b = super.touchDown(event, x, y, pointer, button);
         if (x > (mainActor.getWidth() * 0.1) && y > (mainActor.getHeight() * 0.1)
                 && x < (mainActor.getWidth() * 0.9) && y < (mainActor.getHeight() * 0.9)) {
+            log.info("touchDown {} {} {} {} {}", event, x, y, pointer, button);
             started = true;
             start.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
             if (actors != null) {
@@ -47,10 +47,10 @@ public class MoveDragListener extends DragListener {
     @Override
     public void touchDragged(InputEvent event, float x, float y, int pointer) {
         super.touchDragged(event, x, y, pointer);
-        log.info("touchDragged {} {} {} {}", event, x, y, pointer);
         if (x > (mainActor.getWidth() * 0.1) && y > (mainActor.getHeight() * 0.1)
                 && x < (mainActor.getWidth() * 0.9) && y < (mainActor.getHeight() * 0.9)
                 && started) {
+            log.info("touchDragged {} {} {} {}", event, x, y, pointer);
             mainActor.setX(getXDiff(event, mainActor));
             mainActor.setY(getYDiff(event, mainActor));
             if (actors != null) {

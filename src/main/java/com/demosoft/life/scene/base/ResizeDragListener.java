@@ -12,7 +12,8 @@ import java.util.Map;
 public class ResizeDragListener extends DragListener {
 
     private final Actor mainActor;
-    private Map<String, Point> start = new HashMap<>();
+    private Map<String, Point> startSize = new HashMap<>();
+    private Map<String, Point> startPosition = new HashMap<>();
     private boolean startedXUp = false;
     private boolean startedXDown = false;
     private boolean startedYUp = false;
@@ -24,25 +25,33 @@ public class ResizeDragListener extends DragListener {
 
     @Override
     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        log.info("touchDown {} {} {} {} {}", event, x, y, pointer, button);
+
         boolean b = super.touchDown(event, x, y, pointer, button);
         if (x < (mainActor.getWidth() * 0.1)) {
-            start.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
+            log.info("touchDown startedXUp {} {} {} {} {}", event, x, y, pointer, button);
+            startSize.put(mainActor.getName(), new Point(mainActor.getWidth(), mainActor.getHeight()));
+            startPosition.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
             startedXUp = true;
         }
 
         if (y < (mainActor.getHeight() * 0.1)) {
-            start.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
+            log.info("touchDown startedYUp {} {} {} {} {}", event, x, y, pointer, button);
+            startSize.put(mainActor.getName(), new Point(mainActor.getWidth(), mainActor.getHeight()));
+            startPosition.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
             startedYUp = true;
         }
 
         if (x > (mainActor.getWidth() * 0.9)) {
-            start.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
+            log.info("touchDown startedXDown {} {} {} {} {}", event, x, y, pointer, button);
+            startSize.put(mainActor.getName(), new Point(mainActor.getWidth(), mainActor.getHeight()));
+            startPosition.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
             startedXDown = true;
         }
 
         if (y > (mainActor.getHeight() * 0.9)) {
-            start.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
+            log.info("touchDown startedYDown {} {} {} {} {}", event, x, y, pointer, button);
+            startSize.put(mainActor.getName(), new Point(mainActor.getWidth(), mainActor.getHeight()));
+            startPosition.put(mainActor.getName(), new Point(mainActor.getX(), mainActor.getY()));
             startedYDown = true;
         }
         return b;
@@ -60,34 +69,54 @@ public class ResizeDragListener extends DragListener {
     @Override
     public void touchDragged(InputEvent event, float x, float y, int pointer) {
         super.touchDragged(event, x, y, pointer);
-        log.info("touchDragged {} {} {} {}", event, x, y, pointer);
+
 
         if (x < (mainActor.getWidth() * 0.1) && startedXUp) {
-            mainActor.setWidth(getWidthDiff(event, mainActor));
+            log.info("touchDragged XUp {} {} {} {}", event, x, y, pointer);
+            mainActor.setWidth(getWidthDiffUp(event, mainActor));
+            mainActor.setX(getXDiff(event, mainActor));
         }
 
         if (y < (mainActor.getHeight() * 0.1) && startedYUp) {
-            mainActor.setHeight(getHeightDiff(event, mainActor));
+            log.info("touchDragged YUp {} {} {} {}", event, x, y, pointer);
+            mainActor.setHeight(getHeightDiffUp(event, mainActor));
+            mainActor.setY(getYDiff(event, mainActor));
         }
 
         if (x > (mainActor.getWidth() * 0.9) && startedXDown) {
-            mainActor.setWidth(getWidthDiff(event, mainActor));
+            log.info("touchDragged XDown {} {} {} {}", event, x, y, pointer);
+            mainActor.setWidth(getWidthDiffDown(event, mainActor));
         }
 
         if (y > (mainActor.getHeight() * 0.9) && startedYDown) {
-            mainActor.setHeight(getHeightDiff(event, mainActor));
+            log.info("touchDragged YDown {} {} {} {}", event, x, y, pointer);
+            mainActor.setHeight(getHeightDiffDown(event, mainActor));
         }
 
     }
 
-    private float getHeightDiff(InputEvent event, Actor actor) {
-
-        return start.get(actor.getName()).getY() - (getStageTouchDownY() - event.getStageY());
+    private float getHeightDiffDown(InputEvent event, Actor actor) {
+        return startSize.get(actor.getName()).getY() - (getStageTouchDownY() - event.getStageY());
+    }
+    private float getHeightDiffUp(InputEvent event, Actor actor) {
+        return startSize.get(actor.getName()).getY() + (getStageTouchDownY() - event.getStageY());
     }
 
-    private float getWidthDiff(InputEvent event, Actor actor) {
-        return start.get(actor.getName()).getX() - (getStageTouchDownX() - event.getStageX());
+    private float getWidthDiffDown(InputEvent event, Actor actor) {
+        return startSize.get(actor.getName()).getX() - (getStageTouchDownX() - event.getStageX());
     }
+    private float getWidthDiffUp(InputEvent event, Actor actor) {
+        return startSize.get(actor.getName()).getX() + (getStageTouchDownX() - event.getStageX());
+    }
+
+    private float getYDiff(InputEvent event, Actor actor) {
+        return startPosition.get(actor.getName()).getY() - (getStageTouchDownY() - event.getStageY());
+    }
+
+    private float getXDiff(InputEvent event, Actor actor) {
+        return startPosition.get(actor.getName()).getX() - (getStageTouchDownX() - event.getStageX());
+    }
+
 
 
 }
