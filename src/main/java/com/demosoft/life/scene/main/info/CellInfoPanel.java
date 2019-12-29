@@ -6,6 +6,8 @@ import com.demosoft.life.assets.AssetsLoader;
 import com.demosoft.life.imitation.entity.Cell;
 import com.demosoft.life.imitation.entity.Landscape;
 import com.demosoft.life.imitation.entity.graphic.*;
+import com.demosoft.life.scene.base.MoveDragListener;
+import com.demosoft.life.scene.base.ResizeDragListener;
 import com.demosoft.life.scene.format.XFormatter;
 import com.demosoft.life.scene.main.MainScreen;
 import com.demosoft.life.spring.ContextContainer;
@@ -40,9 +42,13 @@ public class CellInfoPanel {
         baseElement = new TextArea("cellInfoPanel", skin);
         baseElement.setBounds(1350, context.translateY(535), 500, 500);
         baseElement.setDisabled(true);
+        baseElement.setName("text");
 
         label = new Label("GraphicCell Info", skin);
         label.setBounds(1350, context.translateY(35), 300, 25);
+        label.setName("label");
+        baseElement.addListener(new MoveDragListener(baseElement, label));
+        baseElement.addListener(new ResizeDragListener(baseElement));
     }
 
     public void addToStage(Stage stage) {
